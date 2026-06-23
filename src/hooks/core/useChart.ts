@@ -68,12 +68,12 @@ export const useChartOps = (): ChartThemeConfig => ({
   /** 颜色组 */
   colors: [
     getCssVar('--el-color-primary-light-1'),
-    '#4ABEFF',
-    '#EDF2FF',
-    '#14DEBA',
-    '#FFAF20',
-    '#FA8A6C',
-    '#FFAF20'
+    '#18181B',
+    '#3F3F46',
+    '#71717A',
+    '#A1A1AA',
+    '#D4D4D8',
+    '#E4E4E7'
   ]
 })
 

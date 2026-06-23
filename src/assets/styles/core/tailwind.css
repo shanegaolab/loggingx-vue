@@ -8,79 +8,86 @@
   --theme-color: var(--main-color);
 
   /* Theme Colors - OKLCH Format */
-  --art-primary: oklch(0.7 0.23 260);
-  --art-secondary: oklch(0.72 0.19 231.6);
-  --art-error: oklch(0.73 0.15 25.3);
-  --art-info: oklch(0.58 0.03 254.1);
-  --art-success: oklch(0.78 0.17 166.1);
-  --art-warning: oklch(0.78 0.14 75.5);
-  --art-danger: oklch(0.68 0.22 25.3);
+  --art-primary: #000000;
+  --art-secondary: #1f1f1f;
+  --art-error: #262626;
+  --art-info: #6b7280;
+  --art-success: #111111;
+  --art-warning: #737373;
+  --art-danger: #000000;
 
   /* Gray Scale - Light Mode */
-  --art-gray-100: #f9fafb;
-  --art-gray-200: #f2f4f5;
-  --art-gray-300: #e6eaeb;
-  --art-gray-400: #dbdfe1;
-  --art-gray-500: #949eb7;
-  --art-gray-600: #7987a1;
-  --art-gray-700: #4d5875;
-  --art-gray-800: #383853;
-  --art-gray-900: #323251;
+  --art-gray-100: #fafafa;
+  --art-gray-200: #f4f4f5;
+  --art-gray-300: #e4e4e7;
+  --art-gray-400: #d4d4d8;
+  --art-gray-500: #a1a1aa;
+  --art-gray-600: #71717a;
+  --art-gray-700: #52525b;
+  --art-gray-800: #27272a;
+  --art-gray-900: #18181b;
 
   /* Border Colors */
   --art-card-border: rgba(0, 0, 0, 0.08);
 
-  --default-border: #e2e8ee;
-  --default-border-dashed: #dbdfe9;
+  --default-border: #e5e5e5;
+  --default-border-dashed: #d4d4d4;
 
   /* Background Colors */
-  --default-bg-color: #fafbfc;
+  --default-bg-color: #fafafa;
   --default-box-color: #ffffff;
 
   /* Hover Color */
-  --art-hover-color: #edeff0;
+  --art-hover-color: #f0f0f0;
 
   /* Active Color */
-  --art-active-color: #f2f4f5;
+  --art-active-color: #eeeeee;
 
   /* Element Component Active Color */
-  --art-el-active-color: #f2f4f5;
+  --art-el-active-color: #eeeeee;
 }
 
 /* ==================== Dark Mode Variables ==================== */
 .dark {
   /* Base Colors */
   --art-color: #000000;
+  --art-primary: #ffffff;
+  --art-secondary: #e5e5e5;
+  --art-error: #d4d4d4;
+  --art-info: #a3a3a3;
+  --art-success: #f5f5f5;
+  --art-warning: #a3a3a3;
+  --art-danger: #ffffff;
 
   /* Gray Scale - Dark Mode */
-  --art-gray-100: #110f0f;
-  --art-gray-200: #17171c;
-  --art-gray-300: #393946;
-  --art-gray-400: #505062;
-  --art-gray-500: #73738c;
-  --art-gray-600: #8f8fa3;
-  --art-gray-700: #ababba;
-  --art-gray-800: #c7c7d1;
-  --art-gray-900: #e3e3e8;
+  --art-gray-100: #09090b;
+  --art-gray-200: #18181b;
+  --art-gray-300: #27272a;
+  --art-gray-400: #3f3f46;
+  --art-gray-500: #71717a;
+  --art-gray-600: #a1a1aa;
+  --art-gray-700: #d4d4d8;
+  --art-gray-800: #e4e4e7;
+  --art-gray-900: #fafafa;
 
   /* Border Colors */
   --art-card-border: rgba(255, 255, 255, 0.08);
 
   --default-border: rgba(255, 255, 255, 0.1);
-  --default-border-dashed: #363843;
+  --default-border-dashed: #3f3f46;
 
   /* Background Colors */
   --default-bg-color: #070707;
-  --default-box-color: #161618;
+  --default-box-color: #111111;
 
   /* Hover Color */
-  --art-hover-color: #252530;
+  --art-hover-color: #1f1f1f;
 
   /* Active Color */
-  --art-active-color: #202226;
+  --art-active-color: #242424;
 
   /* Element Component Active Color */
-  --art-el-active-color: #2e2e38;
+  --art-el-active-color: #2a2a2a;
 }
 
 /* ==================== Tailwind Theme Configuration ==================== */

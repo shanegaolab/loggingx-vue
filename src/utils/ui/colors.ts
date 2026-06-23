@@ -259,15 +259,18 @@ export function handleElementThemeColor(theme: string, isDark: boolean = false):
  * @param color 主题颜色
  */
 export function setElementThemeColor(color: string): void {
+  const settingStore = useSettingStore()
+  const effectiveColor =
+    settingStore.isDark && color.trim().toLowerCase() === '#000000' ? '#ffffff' : color
   const mixColor = '#ffffff'
   const elStyle = document.documentElement.style
 
-  elStyle.setProperty('--el-color-primary', color)
-  handleElementThemeColor(color, useSettingStore().isDark)
+  elStyle.setProperty('--el-color-primary', effectiveColor)
+  handleElementThemeColor(effectiveColor, settingStore.isDark)
 
   // 生成更淡一点的颜色
   for (let i = 1; i < 16; i++) {
-    const itemColor = colourBlend(color, mixColor, i / 16)
+    const itemColor = colourBlend(effectiveColor, mixColor, i / 16)
     elStyle.setProperty(`--el-color-primary-custom-${i}`, itemColor)
   }
 }

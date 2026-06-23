@@ -14,7 +14,7 @@ const fastEnterConfig: FastEnterConfig = {
       name: '工作台',
       description: '系统概览与数据统计',
       icon: 'ri:pie-chart-line',
-      iconColor: '#377dff',
+      iconColor: '#111111',
       enabled: true,
       order: 1,
       routeName: 'Console'
@@ -23,7 +23,7 @@ const fastEnterConfig: FastEnterConfig = {
       name: '分析页',
       description: '数据分析与可视化',
       icon: 'ri:game-line',
-      iconColor: '#ff3b30',
+      iconColor: '#27272A',
       enabled: true,
       order: 2,
       routeName: 'Analysis'
@@ -32,7 +32,7 @@ const fastEnterConfig: FastEnterConfig = {
       name: '礼花效果',
       description: '动画特效展示',
       icon: 'ri:loader-line',
-      iconColor: '#7A7FFF',
+      iconColor: '#3F3F46',
       enabled: true,
       order: 3,
       routeName: 'Fireworks'
@@ -41,7 +41,7 @@ const fastEnterConfig: FastEnterConfig = {
       name: '聊天',
       description: '即时通讯功能',
       icon: 'ri:user-line',
-      iconColor: '#13DEB9',
+      iconColor: '#52525B',
       enabled: true,
       order: 4,
       routeName: 'Chat'
@@ -50,7 +50,7 @@ const fastEnterConfig: FastEnterConfig = {
       name: '官方文档',
       description: '使用指南与开发文档',
       icon: 'ri:bill-line',
-      iconColor: '#ffb100',
+      iconColor: '#71717A',
       enabled: true,
       order: 5,
       link: WEB_LINKS.DOCS
@@ -59,7 +59,7 @@ const fastEnterConfig: FastEnterConfig = {
       name: '技术支持',
       description: '技术支持与问题反馈',
       icon: 'ri:user-location-line',
-      iconColor: '#ff6b6b',
+      iconColor: '#A1A1AA',
       enabled: true,
       order: 6,
       link: WEB_LINKS.COMMUNITY
@@ -68,7 +68,7 @@ const fastEnterConfig: FastEnterConfig = {
       name: '更新日志',
       description: '版本更新与变更记录',
       icon: 'ri:gamepad-line',
-      iconColor: '#38C0FC',
+      iconColor: '#D4D4D8',
       enabled: true,
       order: 7,
       routeName: 'ChangeLog'
@@ -77,7 +77,7 @@ const fastEnterConfig: FastEnterConfig = {
       name: '哔哩哔哩',
       description: '技术分享与交流',
       icon: 'ri:bilibili-line',
-      iconColor: '#FB7299',
+      iconColor: '#E4E4E7',
       enabled: true,
       order: 8,
       link: WEB_LINKS.BILIBILI

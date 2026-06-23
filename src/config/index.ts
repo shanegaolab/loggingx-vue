@@ -58,17 +58,17 @@ const appConfig: SystemConfig = {
     {
       name: 'Dark',
       theme: SystemThemeEnum.DARK,
-      color: ['#22252A'],
-      leftLineColor: '#3F4257',
-      rightLineColor: '#3F4257',
+      color: ['#111111'],
+      leftLineColor: '#3F3F46',
+      rightLineColor: '#3F3F46',
       img: configImages.themeStyles.dark
     },
     {
       name: 'System',
       theme: SystemThemeEnum.AUTO,
-      color: ['#fff', '#22252A'],
+      color: ['#fff', '#111111'],
       leftLineColor: '#EDEEF0',
-      rightLineColor: '#3F4257',
+      rightLineColor: '#3F3F46',
       img: configImages.themeStyles.system
     }
   ],
@@ -85,24 +85,24 @@ const appConfig: SystemConfig = {
       theme: MenuThemeEnum.DESIGN,
       background: '#FFFFFF',
       systemNameColor: 'var(--art-gray-800)',
-      iconColor: '#6B6B6B',
-      textColor: '#29343D',
+      iconColor: '#52525B',
+      textColor: '#18181B',
       img: configImages.menuStyles.design
     },
     {
       theme: MenuThemeEnum.DARK,
-      background: '#191A23',
-      systemNameColor: '#D9DADB',
-      iconColor: '#BABBBD',
-      textColor: '#BABBBD',
+      background: '#111111',
+      systemNameColor: '#FAFAFA',
+      iconColor: '#D4D4D8',
+      textColor: '#D4D4D8',
       img: configImages.menuStyles.dark
     },
     {
       theme: MenuThemeEnum.LIGHT,
       background: '#ffffff',
       systemNameColor: 'var(--art-gray-800)',
-      iconColor: '#6B6B6B',
-      textColor: '#29343D',
+      iconColor: '#52525B',
+      textColor: '#18181B',
       img: configImages.menuStyles.light
     }
   ],
@@ -111,21 +111,21 @@ const appConfig: SystemConfig = {
     {
       theme: MenuThemeEnum.DARK,
       background: 'var(--default-box-color)',
-      systemNameColor: '#DDDDDD',
-      iconColor: '#BABBBD',
+      systemNameColor: '#FAFAFA',
+      iconColor: '#D4D4D8',
       textColor: 'rgba(#FFFFFF, 0.7)'
     }
   ],
   // 系统主色
   systemMainColor: [
     '#000000',
-    '#5D87FF',
-    '#B48DF3',
-    '#1D84FF',
-    '#60C041',
-    '#38C0FC',
-    '#F9901F',
-    '#FF80C8'
+    '#18181B',
+    '#27272A',
+    '#3F3F46',
+    '#71717A',
+    '#A1A1AA',
+    '#E4E4E7',
+    '#FFFFFF'
   ] as const,
   // 快速入口配置
   fastEnter: fastEnterConfig,
