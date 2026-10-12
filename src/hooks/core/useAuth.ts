@@ -31,42 +31,43 @@
  */
 
 import { useRoute } from 'vue-router'
-import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/store/modules/user'
 import { useAppMode } from '@/hooks/core/useAppMode'
 import type { AppRouteRecord } from '@/types/router'
 
 type AuthItem = NonNullable<AppRouteRecord['meta']['authList']>[number]
 
-const userStore = useUserStore()
+/**
+ * 权限判断
+ * - 前端模式：读取用户信息中的按钮权限 info.buttons
+ * - 后端模式：读取路由 meta.authList
+ *
+ * 每次调用都实时读取 store / 路由，在模板或 computed 中使用时会自动随权限变化更新
+ * @param auth 权限标识
+ * @param routeAuthList 当前路由 meta.authList
+ */
+export function checkAuth(auth: string, routeAuthList: unknown): boolean {
+  const { isFrontendMode } = useAppMode()
+
+  // 前端模式
+  if (isFrontendMode.value) {
+    const buttons = useUserStore().info?.buttons ?? []
+    return buttons.includes(auth)
+  }
+
+  // 后端模式
+  if (!Array.isArray(routeAuthList)) return false
+  return (routeAuthList as AuthItem[]).some((item) => item?.authMark === auth)
+}
 
 export const useAuth = () => {
   const route = useRoute()
-  const { isFrontendMode } = useAppMode()
-  const { info } = storeToRefs(userStore)
-
-  // 前端按钮权限（例如：['add', 'edit']）
-  const frontendAuthList = info.value?.buttons ?? []
-
-  // 后端路由 meta 配置的权限列表（例如：[{ authMark: 'add' }]）
-  const backendAuthList: AuthItem[] = Array.isArray(route.meta.authList)
-    ? (route.meta.authList as AuthItem[])
-    : []
 
   /**
-   * 检查是否拥有某权限标识（前后端模式通用）
+   * 检查是否拥有某权限
    * @param auth 权限标识
-   * @returns 是否有权限
    */
-  const hasAuth = (auth: string): boolean => {
-    // 前端模式
-    if (isFrontendMode.value) {
-      return frontendAuthList.includes(auth)
-    }
-
-    // 后端模式
-    return backendAuthList.some((item) => item?.authMark === auth)
-  }
+  const hasAuth = (auth: string): boolean => checkAuth(auth, route.meta.authList)
 
   return {
     hasAuth
