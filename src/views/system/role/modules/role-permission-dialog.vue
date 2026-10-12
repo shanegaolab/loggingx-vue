@@ -7,14 +7,13 @@
     class="el-dialog-border"
     @close="handleClose"
   >
-    <ElScrollbar height="70vh">
+    <ElScrollbar height="70vh" v-loading="loading">
       <ElTree
         ref="treeRef"
         :data="processedMenuList"
         show-checkbox
-        node-key="name"
+        node-key="id"
         :default-expand-all="isExpandAll"
-        :default-checked-keys="[1, 2, 3]"
         :props="defaultProps"
         @check="handleTreeCheck"
       >
@@ -35,13 +34,14 @@
       <ElButton @click="toggleSelectAll" style="margin-left: 8px">{{
         isSelectAll ? '取消全选' : '全部选择'
       }}</ElButton>
-      <ElButton type="primary" @click="savePermission">保存</ElButton>
+      <ElButton type="primary" :loading="saving" @click="savePermission">保存</ElButton>
     </template>
   </ElDialog>
 </template>
 
 <script setup lang="ts">
-  import { useMenuStore } from '@/store/modules/menu'
+  import { fetchGetMenuTree, fetchGetRoleMenuIds, fetchSaveRoleMenuIds } from '@/api/system-manage'
+  import type { AppRouteRecord } from '@/types/router'
   import { formatMenuTitle } from '@/utils/router'
 
   type RoleListItem = Api.SystemManage.RoleListItem
@@ -63,8 +63,10 @@
 
   const emit = defineEmits<Emits>()
 
-  const { menuList } = storeToRefs(useMenuStore())
+  const menuTree = ref<AppRouteRecord[]>([])
   const treeRef = ref()
+  const loading = ref(false)
+  const saving = ref(false)
   const isExpandAll = ref(true)
   const isSelectAll = ref(false)
 
@@ -80,15 +82,16 @@
    * 菜单节点类型
    */
   interface MenuNode {
-    id?: string | number
+    id?: number
     name?: string
     label?: string
+    isAuth?: boolean
     meta?: {
       title?: string
       authList?: Array<{
+        id: number
         authMark: string
         title: string
-        checked?: boolean
       }>
     }
     children?: MenuNode[]
@@ -97,35 +100,27 @@
 
   /**
    * 处理菜单数据，将 authList 转换为树形子节点
-   * 递归处理菜单树，将权限列表展开为可选择的子节点
+   * 菜单和按钮在后端共用同一 ID 序列，因此直接用 id 作为树节点 key
    */
   const processedMenuList = computed(() => {
     const processNode = (node: MenuNode): MenuNode => {
-      const processed = { ...node }
+      const processed: MenuNode = { ...node }
+      const children = (node.children ?? []).map(processNode)
 
       // 如果有 authList，将其转换为子节点
-      if (node.meta?.authList?.length) {
-        const authNodes = node.meta.authList.map((auth) => ({
-          id: `${node.id}_${auth.authMark}`,
-          name: `${node.name}_${auth.authMark}`,
-          label: auth.title,
-          authMark: auth.authMark,
-          isAuth: true,
-          checked: auth.checked || false
-        }))
+      const authNodes: MenuNode[] = (node.meta?.authList ?? []).map((auth) => ({
+        id: auth.id,
+        label: auth.title,
+        authMark: auth.authMark,
+        isAuth: true
+      }))
 
-        processed.children = processed.children ? [...processed.children, ...authNodes] : authNodes
-      }
-
-      // 递归处理子节点
-      if (processed.children) {
-        processed.children = processed.children.map(processNode)
-      }
-
+      const allChildren = [...children, ...authNodes]
+      processed.children = allChildren.length ? allChildren : undefined
       return processed
     }
 
-    return (menuList.value as any[]).map(processNode)
+    return (menuTree.value as MenuNode[]).map(processNode)
   })
 
   /**
@@ -137,16 +132,36 @@
   }
 
   /**
-   * 监听弹窗打开，初始化权限数据
+   * 监听弹窗打开，加载菜单树和角色已有权限
    */
   watch(
     () => props.modelValue,
     (newVal) => {
       if (newVal && props.roleData) {
-        // TODO: 根据角色加载对应的权限数据
+        loadPermission(props.roleData.roleId)
       }
     }
   )
+
+  /**
+   * 加载菜单树和角色已分配的菜单
+   * 只勾选叶子节点：父节点的勾选/半勾选状态由 ElTree 根据子节点自动推导，
+   * 否则勾选父节点会把它下面的所有子节点一起勾上
+   */
+  const loadPermission = async (roleId: number) => {
+    loading.value = true
+    try {
+      const [tree, menuIds] = await Promise.all([fetchGetMenuTree(), fetchGetRoleMenuIds(roleId)])
+      menuTree.value = tree
+      await nextTick()
+
+      const leafIds = new Set(getLeafNodeKeys(processedMenuList.value))
+      treeRef.value?.setCheckedKeys(menuIds.filter((id) => leafIds.has(id)))
+      handleTreeCheck()
+    } finally {
+      loading.value = false
+    }
+  }
 
   /**
    * 关闭弹窗并清空选中状态
@@ -158,12 +173,22 @@
 
   /**
    * 保存权限配置
+   * 同时提交半选中的父级菜单，保证子菜单在后端路由中有可挂载的父级
    */
-  const savePermission = () => {
-    // TODO: 调用保存权限接口
-    ElMessage.success('权限保存成功')
-    emit('success')
-    handleClose()
+  const savePermission = async () => {
+    const tree = treeRef.value
+    if (!tree || !props.roleData) return
+
+    const menuIds: number[] = [...tree.getCheckedKeys(), ...tree.getHalfCheckedKeys()]
+    saving.value = true
+    try {
+      await fetchSaveRoleMenuIds(props.roleData.roleId, menuIds)
+      ElMessage.success('权限保存成功')
+      emit('success')
+      handleClose()
+    } finally {
+      saving.value = false
+    }
   }
 
   /**
@@ -190,8 +215,7 @@
     if (!tree) return
 
     if (!isSelectAll.value) {
-      const allKeys = getAllNodeKeys(processedMenuList.value)
-      tree.setCheckedKeys(allKeys)
+      tree.setCheckedKeys(getAllNodeKeys(processedMenuList.value))
     } else {
       tree.setCheckedKeys([])
     }
@@ -204,12 +228,27 @@
    * @param nodes 节点列表
    * @returns 所有节点的 key 数组
    */
-  const getAllNodeKeys = (nodes: MenuNode[]): string[] => {
-    const keys: string[] = []
+  const getAllNodeKeys = (nodes: MenuNode[]): number[] => {
+    const keys: number[] = []
     const traverse = (nodeList: MenuNode[]): void => {
       nodeList.forEach((node) => {
-        if (node.name) keys.push(node.name)
+        if (node.id !== undefined) keys.push(node.id)
         if (node.children?.length) traverse(node.children)
+      })
+    }
+    traverse(nodes)
+    return keys
+  }
+
+  /**
+   * 递归获取所有叶子节点的 key
+   */
+  const getLeafNodeKeys = (nodes: MenuNode[]): number[] => {
+    const keys: number[] = []
+    const traverse = (nodeList: MenuNode[]): void => {
+      nodeList.forEach((node) => {
+        if (node.children?.length) traverse(node.children)
+        else if (node.id !== undefined) keys.push(node.id)
       })
     }
     traverse(nodes)

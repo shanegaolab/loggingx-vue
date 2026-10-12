@@ -71,7 +71,11 @@ declare namespace Api {
     /** 登录响应 */
     interface LoginResponse {
       token: string
-      refreshToken: string
+      tokenType?: string
+      /** 令牌有效期（秒） */
+      expiresIn?: number
+      /** 后端暂不支持刷新令牌 */
+      refreshToken?: string
     }
 
     /** 用户信息 */
@@ -80,6 +84,7 @@ declare namespace Api {
       roles: string[]
       userId: number
       userName: string
+      nickName?: string
       email: string
       avatar?: string
     }
@@ -134,5 +139,54 @@ declare namespace Api {
           endTime: string | null
         }
     >
+
+    /** 新增/编辑用户（password 新增时必填，编辑时留空表示不修改） */
+    interface UserForm {
+      userName: string
+      password?: string
+      nickName?: string
+      /** 1 男，2 女 */
+      userGender: string
+      userPhone: string
+      userEmail?: string
+      /** 1 在线，2 离线，3 异常，4 注销 */
+      status?: string
+      /** 角色编码 */
+      userRoles: string[]
+    }
+
+    /** 新增/编辑角色 */
+    type RoleForm = Pick<RoleListItem, 'roleName' | 'roleCode' | 'description' | 'enabled'>
+
+    /** 新增/编辑菜单或按钮（字段与菜单弹窗表单一致） */
+    interface MenuForm {
+      menuType: 'menu' | 'button'
+      /** 父级菜单 ID，新增时有效，0 表示一级菜单 */
+      parentId?: number
+      /** 菜单名称（标题） */
+      name: string
+      path: string
+      /** 路由名称（权限标识） */
+      label: string
+      component: string
+      icon: string
+      isEnable: boolean
+      sort: number
+      keepAlive: boolean
+      isHide: boolean
+      isHideTab: boolean
+      link: string
+      isIframe: boolean
+      showBadge: boolean
+      showTextBadge: string
+      fixedTab: boolean
+      activePath: string
+      isFullPage: boolean
+      /** 按钮名称 */
+      authName: string
+      /** 按钮权限标识 */
+      authLabel: string
+      authSort: number
+    }
   }
 }

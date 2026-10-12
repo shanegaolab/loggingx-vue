@@ -70,7 +70,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (request: InternalAxiosRequestConfig) => {
     const { accessToken } = useUserStore()
-    if (accessToken) request.headers.set('Authorization', accessToken)
+    if (accessToken) request.headers.set('Authorization', `Bearer ${accessToken}`)
 
     if (request.data && !(request.data instanceof FormData) && !request.headers['Content-Type']) {
       request.headers.set('Content-Type', 'application/json')
@@ -138,30 +138,46 @@ function logOut() {
   }, LOGOUT_DELAY)
 }
 
+/** 幂等方法：只有这些方法失败后才允许自动重试，避免 POST/PUT 等写操作被重复提交 */
+const IDEMPOTENT_METHODS = ['GET', 'HEAD', 'OPTIONS']
+
 /** 是否需要重试 */
-function shouldRetry(statusCode: number) {
+function shouldRetry(config: ExtendedAxiosRequestConfig, error: unknown) {
+  if (!(error instanceof HttpError) || error.canceled) return false
+  if (!IDEMPOTENT_METHODS.includes(config.method?.toUpperCase() || 'GET')) return false
   return [
     ApiStatus.requestTimeout,
     ApiStatus.internalServerError,
     ApiStatus.badGateway,
     ApiStatus.serviceUnavailable,
     ApiStatus.gatewayTimeout
-  ].includes(statusCode)
+  ].includes(error.code)
 }
 
-/** 请求重试逻辑 */
+/**
+ * 请求入口：失败重试 + 统一错误提示
+ * 错误提示放在重试循环之外，保证重试多次也只弹一次
+ */
 async function retryRequest<T>(
   config: ExtendedAxiosRequestConfig,
   retries: number = MAX_RETRIES
 ): Promise<T> {
-  try {
-    return await request<T>(config)
-  } catch (error) {
-    if (retries > 0 && error instanceof HttpError && shouldRetry(error.code)) {
-      await delay(RETRY_DELAY)
-      return retryRequest<T>(config, retries - 1)
+  let remaining = retries
+  while (true) {
+    try {
+      return await request<T>(config)
+    } catch (error) {
+      if (remaining > 0 && shouldRetry(config, error)) {
+        remaining--
+        await delay(RETRY_DELAY)
+        continue
+      }
+      // 401 已在拦截器中统一提示并登出；主动取消的请求不提示
+      if (error instanceof HttpError && error.code !== ApiStatus.unauthorized && !error.canceled) {
+        showError(error, config.showErrorMessage !== false)
+      }
+      throw error
     }
-    throw error
   }
 }
 
@@ -170,7 +186,7 @@ function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-/** 请求函数 */
+/** 单次请求（不含重试与错误提示） */
 async function request<T = any>(config: ExtendedAxiosRequestConfig): Promise<T> {
   // POST | PUT 参数自动填充
   if (
@@ -182,27 +198,19 @@ async function request<T = any>(config: ExtendedAxiosRequestConfig): Promise<T> 
     config.params = undefined
   }
 
-  try {
-    const res = await axiosInstance.request<BaseResponse<T>>(config)
+  const res = await axiosInstance.request<BaseResponse<T>>(config)
 
-    // 二进制响应直接返回原始数据（Blob / ArrayBuffer）
-    if (isBinaryResponseType(config.responseType)) {
-      return res.data as unknown as T
-    }
-
-    // 显示成功消息
-    if (config.showSuccessMessage && res.data.msg) {
-      showSuccess(res.data.msg)
-    }
-
-    return res.data.data as T
-  } catch (error) {
-    if (error instanceof HttpError && error.code !== ApiStatus.unauthorized) {
-      const showMsg = config.showErrorMessage !== false
-      showError(error, showMsg)
-    }
-    return Promise.reject(error)
+  // 二进制响应直接返回原始数据（Blob / ArrayBuffer）
+  if (isBinaryResponseType(config.responseType)) {
+    return res.data as unknown as T
   }
+
+  // 显示成功消息
+  if (config.showSuccessMessage && res.data.msg) {
+    showSuccess(res.data.msg)
+  }
+
+  return res.data.data as T
 }
 
 /** API方法集合 */

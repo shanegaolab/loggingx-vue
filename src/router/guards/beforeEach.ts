@@ -66,8 +66,8 @@ let pendingLoading = false
 // 一旦设置为 true，只有刷新页面或重新登录才能重置
 let routeInitFailed = false
 
-// 路由初始化进行中标记，防止并发请求
-let routeInitInProgress = false
+// 正在进行的路由初始化，防止并发请求；并发导航会等待它完成后再继续
+let routeInitPromise: Promise<void> | null = null
 
 /**
  * 获取 pendingLoading 状态
@@ -95,7 +95,7 @@ export function getRouteInitFailed(): boolean {
  */
 export function resetRouteInitState(): void {
   routeInitFailed = false
-  routeInitInProgress = false
+  routeInitPromise = null
 }
 
 /**
@@ -170,13 +170,21 @@ async function handleRouteGuard(
 
   // 3. 处理动态路由注册
   if (!routeRegistry?.isRegistered() && userStore.isLogin) {
-    // 防止并发请求（快速连续导航场景）
-    if (routeInitInProgress) {
-      // 正在初始化中，等待完成后重新导航
-      next(false)
+    // 防止并发请求（快速连续导航场景）：等待正在进行的初始化完成后，重新导航到本次目标
+    if (routeInitPromise) {
+      await routeInitPromise
+      if (routeRegistry?.isRegistered()) {
+        next({ path: to.path, query: to.query, hash: to.hash, replace: true })
+      } else {
+        // 初始化失败（已跳转错误页或登录页），取消本次导航
+        next(false)
+      }
       return
     }
-    await handleDynamicRoutes(to, next, router)
+    routeInitPromise = handleDynamicRoutes(to, next, router).finally(() => {
+      routeInitPromise = null
+    })
+    await routeInitPromise
     return
   }
 
@@ -211,8 +219,8 @@ function handleLoginStatus(
     return true
   }
 
-  // 未登录且访问需要权限的页面，跳转到登录页并携带 redirect 参数
-  userStore.logOut()
+  // 未登录且访问需要权限的页面：只清理状态，由守卫负责跳转到登录页并携带 redirect 参数
+  userStore.logOut({ navigate: false })
   next({
     name: 'Login',
     query: { redirect: to.fullPath }
@@ -255,9 +263,6 @@ async function handleDynamicRoutes(
   next: NavigationGuardNext,
   router: Router
 ): Promise<void> {
-  // 标记初始化进行中
-  routeInitInProgress = true
-
   // 显示 loading
   pendingLoading = true
   loadingService.showLoading()
@@ -290,7 +295,6 @@ async function handleDynamicRoutes(
 
     // 8. 静态路由不依赖菜单权限，初始化后直接恢复目标地址。
     if (isStaticRoute(to.path)) {
-      routeInitInProgress = false
       next({
         path: to.path,
         query: to.query,
@@ -307,9 +311,6 @@ async function handleDynamicRoutes(
       menuList,
       homePath.value || '/'
     )
-
-    // 初始化成功，重置进行中标记
-    routeInitInProgress = false
 
     // 9. 重新导航到目标路由
     if (!hasPermission) {
@@ -341,15 +342,12 @@ async function handleDynamicRoutes(
 
     // 401 错误：axios 拦截器已处理退出登录，取消当前导航
     if (isUnauthorizedError(error)) {
-      // 重置状态，允许重新登录后再次初始化
-      routeInitInProgress = false
       next(false)
       return
     }
 
     // 标记初始化失败，防止死循环
     routeInitFailed = true
-    routeInitInProgress = false
 
     // 输出详细错误信息，便于排查
     if (isHttpError(error)) {

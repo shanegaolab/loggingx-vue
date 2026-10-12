@@ -139,8 +139,11 @@ export const useUserStore = defineStore(
      * 退出登录
      * 清空所有用户相关状态并跳转到登录页
      * 如果是同一账号重新登录，保留工作台标签页
+     * @param options.navigate 是否跳转到登录页，默认 true；
+     *   在路由守卫中调用时应传 false，由守卫自己 next() 跳转，避免两次导航互相取消
      */
-    const logOut = () => {
+    const logOut = (options: { navigate?: boolean } = {}) => {
+      const { navigate = true } = options
       // 保存当前用户 ID，用于下次登录时判断是否为同一用户
       const currentUserId = info.value.userId
       if (currentUserId) {
@@ -166,6 +169,7 @@ export const useUserStore = defineStore(
       useMenuStore().setHomePath('')
       // 重置路由状态
       resetRouterState(500)
+      if (!navigate) return
       // 跳转到登录页，携带当前路由作为 redirect 参数
       const currentRoute = router.currentRoute.value
       const redirect = currentRoute.path !== '/login' ? currentRoute.fullPath : undefined

@@ -60,6 +60,8 @@ export class HttpError extends Error {
   public readonly timestamp: string
   public readonly url?: string
   public readonly method?: string
+  /** 是否为主动取消的请求（AbortController / CancelToken） */
+  public readonly canceled: boolean
 
   constructor(
     message: string,
@@ -68,11 +70,13 @@ export class HttpError extends Error {
       data?: unknown
       url?: string
       method?: string
+      canceled?: boolean
     }
   ) {
     super(message)
     this.name = 'HttpError'
     this.code = code
+    this.canceled = options?.canceled ?? false
     this.data = options?.data
     this.timestamp = new Date().toISOString()
     this.url = options?.url
@@ -119,14 +123,14 @@ const getErrorMessage = (status: number): string => {
  * @returns 错误对象
  */
 export function handleError(error: AxiosError<ErrorResponse>): never {
-  // 处理取消的请求
+  // 处理取消的请求（主动取消属于正常行为，标记后由上层跳过错误提示）
   if (error.code === 'ERR_CANCELED') {
     console.warn('Request cancelled:', error.message)
-    throw new HttpError($t('httpMsg.requestCancelled'), ApiStatus.error)
+    throw new HttpError($t('httpMsg.requestCancelled'), ApiStatus.error, { canceled: true })
   }
 
   const statusCode = error.response?.status
-  const errorMessage = error.response?.data?.msg || error.message
+  const errorMessage = error.message
   const requestConfig = error.config
 
   // 处理网络错误
@@ -137,10 +141,11 @@ export function handleError(error: AxiosError<ErrorResponse>): never {
     })
   }
 
-  // 处理 HTTP 状态码错误
-  const message = statusCode
-    ? getErrorMessage(statusCode)
-    : errorMessage || $t('httpMsg.requestFailed')
+  // 处理 HTTP 状态码错误：优先使用后端返回的具体原因，没有时再用状态码对应的通用文案
+  const serverMessage = error.response.data?.msg
+  const message =
+    serverMessage ||
+    (statusCode ? getErrorMessage(statusCode) : errorMessage || $t('httpMsg.requestFailed'))
   throw new HttpError(message, statusCode || ApiStatus.error, {
     data: error.response.data,
     url: requestConfig?.url,
