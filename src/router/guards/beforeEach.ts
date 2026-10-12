@@ -33,7 +33,7 @@
  * 6. 未匹配路由跳转到 404 页面
  *
  * @module router/guards/beforeEach
- * @author Art Design Pro Team
+ * @author Logx Design Pro Team
  */
 import type { Router, RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
 import { nextTick } from 'vue'
@@ -221,33 +221,30 @@ function handleLoginStatus(
 }
 
 /**
+ * 静态路由路径匹配正则（模块加载时预编译一次，避免每次导航都重新构造）
+ * 404 catch-all 路由不应视为可匿名访问的静态页，
+ * 否则未登录时手动输入任意地址会直接落到 404，无法跳转登录页。
+ */
+const staticRoutePatterns: RegExp[] = (() => {
+  const patterns: RegExp[] = []
+  type RouteLike = { path: string; name?: unknown; children?: readonly RouteLike[] }
+  const collect = (routes: readonly RouteLike[]) => {
+    routes.forEach((route) => {
+      if (route.name === 'Exception404') return
+      const pattern = route.path.replace(/:[^/]+/g, '[^/]+').replace(/\*/g, '.*')
+      patterns.push(new RegExp(`^${pattern}$`))
+      if (route.children?.length) collect(route.children)
+    })
+  }
+  collect(staticRoutes)
+  return patterns
+})()
+
+/**
  * 检查路由是否为静态路由
  */
 function isStaticRoute(path: string): boolean {
-  const checkRoute = (routes: any[], targetPath: string): boolean => {
-    return routes.some((route) => {
-      // 404 catch-all 路由不应视为可匿名访问的静态页，
-      // 否则未登录时手动输入任意地址会直接落到 404，无法跳转登录页。
-      if (route.name === 'Exception404') {
-        return false
-      }
-
-      // 处理动态路由参数匹配
-      const routePath = route.path
-      const pattern = routePath.replace(/:[^/]+/g, '[^/]+').replace(/\*/g, '.*')
-      const regex = new RegExp(`^${pattern}$`)
-
-      if (regex.test(targetPath)) {
-        return true
-      }
-      if (route.children && route.children.length > 0) {
-        return checkRoute(route.children, targetPath)
-      }
-      return false
-    })
-  }
-
-  return checkRoute(staticRoutes, path)
+  return staticRoutePatterns.some((regex) => regex.test(path))
 }
 
 /**

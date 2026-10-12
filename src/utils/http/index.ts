@@ -11,7 +11,7 @@
  * - 支持 GET/POST/PUT/DELETE 等常用方法
  *
  * @module utils/http
- * @author Art Design Pro Team
+ * @author Logx Design Pro Team
  */
 
 import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
@@ -30,12 +30,17 @@ const UNAUTHORIZED_DEBOUNCE_TIME = 3000
 
 /** 401防抖状态 */
 let isUnauthorizedErrorShown = false
-let unauthorizedTimer: NodeJS.Timeout | null = null
+let unauthorizedTimer: ReturnType<typeof setTimeout> | null = null
 
 /** 扩展 AxiosRequestConfig */
 interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
   showErrorMessage?: boolean
   showSuccessMessage?: boolean
+}
+
+/** 二进制响应（文件下载等）不走 { code, msg, data } 业务结构 */
+function isBinaryResponseType(responseType?: AxiosRequestConfig['responseType']) {
+  return responseType === 'blob' || responseType === 'arraybuffer'
 }
 
 const { VITE_API_URL, VITE_WITH_CREDENTIALS } = import.meta.env
@@ -83,6 +88,9 @@ axiosInstance.interceptors.request.use(
 /** 响应拦截器 */
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse<BaseResponse>) => {
+    // 文件下载等二进制响应直接放行，交给调用方处理
+    if (isBinaryResponseType(response.config.responseType)) return response
+
     const { code, msg } = response.data
     if (code === ApiStatus.success) return response
     if (code === ApiStatus.unauthorized) handleUnauthorizedError(msg)
@@ -176,6 +184,11 @@ async function request<T = any>(config: ExtendedAxiosRequestConfig): Promise<T> 
 
   try {
     const res = await axiosInstance.request<BaseResponse<T>>(config)
+
+    // 二进制响应直接返回原始数据（Blob / ArrayBuffer）
+    if (isBinaryResponseType(config.responseType)) {
+      return res.data as unknown as T
+    }
 
     // 显示成功消息
     if (config.showSuccessMessage && res.data.msg) {

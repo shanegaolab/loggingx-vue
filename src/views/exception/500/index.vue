@@ -1,6 +1,6 @@
 <!-- 500页面 -->
 <template>
-  <ArtException
+  <LogxException
     :data="{
       title: '500',
       desc: $t('exceptionPage.500'),

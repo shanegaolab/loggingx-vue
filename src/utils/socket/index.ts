@@ -7,7 +7,10 @@ interface WebSocketOptions {
   reconnectTimeout?: number // 重连超时时间(ms)
   maxReconnectAttempts?: number // 最大重连次数
   connectionTimeout?: number // 连接建立超时时间(ms)
+  maxQueueSize?: number // 断线期间最多缓存的待发送消息数
 }
+
+type SocketTimer = ReturnType<typeof setTimeout>
 
 export default class WebSocketClient {
   private static instance: WebSocketClient | null = null
@@ -20,17 +23,18 @@ export default class WebSocketClient {
   private reconnectTimeout: number
   private maxReconnectAttempts: number
   private connectionTimeout: number
+  private maxQueueSize: number
   private reconnectAttempts: number = 0 // 当前重连次数
 
   // 消息队列 - 缓存连接建立前的消息
   private messageQueue: Array<string | ArrayBufferLike | Blob | ArrayBufferView> = []
 
   // 定时器
-  private detectionTimer: NodeJS.Timeout | null = null
-  private timeoutTimer: NodeJS.Timeout | null = null
-  private reconnectTimer: NodeJS.Timeout | null = null
-  private pingTimer: NodeJS.Timeout | null = null
-  private connectionTimer: NodeJS.Timeout | null = null // 连接超时定时器
+  private detectionTimer: SocketTimer | null = null
+  private timeoutTimer: SocketTimer | null = null
+  private reconnectTimer: SocketTimer | null = null
+  private pingTimer: SocketTimer | null = null
+  private connectionTimer: SocketTimer | null = null // 连接超时定时器
 
   // 状态标识
   private isConnected: boolean = false
@@ -39,7 +43,8 @@ export default class WebSocketClient {
   private isReconnecting: boolean = false
 
   private constructor(options: WebSocketOptions) {
-    this.url = options.url || (process.env.VUE_APP_LOGIN_WEBSOCKET as string)
+    // Vite 中没有 process.env，使用 import.meta.env（原 VUE_APP_ 写法在浏览器里会直接报错）
+    this.url = options.url || import.meta.env.VITE_WS_URL || ''
     this.messageHandler = options.messageHandler
     this.reconnectInterval = options.reconnectInterval ?? 20 * 1000 // 默认20秒
     this.heartbeatInterval = options.heartbeatInterval ?? 5 * 1000 // 默认5秒
@@ -47,6 +52,7 @@ export default class WebSocketClient {
     this.reconnectTimeout = options.reconnectTimeout ?? 30 * 1000 // 默认30秒
     this.maxReconnectAttempts = options.maxReconnectAttempts ?? 10 // 默认最多重连10次
     this.connectionTimeout = options.connectionTimeout ?? 10 * 1000 // 连接超时10秒
+    this.maxQueueSize = options.maxQueueSize ?? 100
   }
 
   // 单例模式获取实例
@@ -82,6 +88,11 @@ export default class WebSocketClient {
     if (this.ws?.readyState === WebSocket.OPEN) {
       console.warn('WebSocket连接已存在')
       this.flushMessageQueue() // 确保队列中的消息被发送
+      return
+    }
+
+    if (!this.url) {
+      console.error('WebSocket 地址未配置：请传入 url 或设置 VITE_WS_URL')
       return
     }
 
@@ -149,8 +160,7 @@ export default class WebSocketClient {
 
     // 如果未连接且不要求立即发送，则加入消息队列
     if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-      console.log('WebSocket未连接，消息已加入队列等待发送')
-      this.messageQueue.push(data)
+      this.enqueue(data)
       // 如果未在重连中，则尝试重连
       if (!this.isConnecting && !this.stopReconnect) {
         this.init()
@@ -163,9 +173,17 @@ export default class WebSocketClient {
     } catch (error) {
       console.error('WebSocket发送消息失败:', error)
       // 发送失败时将消息加入队列，等待重连后重试
-      this.messageQueue.push(data)
+      this.enqueue(data)
       this.reconnect()
     }
+  }
+
+  // 入队（有上限，避免长时间断线时无限堆积占用内存）
+  private enqueue(data: string | ArrayBufferLike | Blob | ArrayBufferView): void {
+    if (this.messageQueue.length >= this.maxQueueSize) {
+      this.messageQueue.shift() // 丢弃最旧的消息
+    }
+    this.messageQueue.push(data)
   }
 
   // 发送队列中的消息
@@ -204,7 +222,8 @@ export default class WebSocketClient {
 
   // 处理收到的消息
   private handleMessage(event: MessageEvent): void {
-    console.log('收到WebSocket消息:', event)
+    // 注意：不要在这里 console.log 每条消息。实时日志流消息量大，
+    // DevTools 会持有每个被打印的对象，导致内存持续上涨、页面卡顿。
     this.resetHeartbeat()
     this.messageHandler(event)
   }
@@ -322,7 +341,6 @@ export default class WebSocketClient {
 
       try {
         this.ws.send('ping')
-        console.log('发送ping消息')
       } catch (error) {
         console.error('发送ping消息失败:', error)
         this.clearTimer('pingTimer')
@@ -381,7 +399,8 @@ export default class WebSocketClient {
       | 'connectionTimer'
   ): void {
     if (this[timerName]) {
-      clearTimeout(this[timerName] as NodeJS.Timeout)
+      // clearTimeout 与 clearInterval 在浏览器中共享 ID 池，可通用
+      clearTimeout(this[timerName] as SocketTimer)
       this[timerName] = null
     }
   }

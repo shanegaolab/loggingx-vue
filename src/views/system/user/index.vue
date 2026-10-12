@@ -1,25 +1,25 @@
 <!-- 用户管理页面 -->
-<!-- art-full-height 自动计算出页面剩余高度 -->
-<!-- art-table-card 一个符合系统样式的 class，同时自动撑满剩余高度 -->
+<!-- logx-full-height 自动计算出页面剩余高度 -->
+<!-- logx-table-card 一个符合系统样式的 class，同时自动撑满剩余高度 -->
 <!-- 更多 useTable 使用示例请移步至 功能示例 下面的高级表格示例或者查看官方文档 -->
 <!-- useTable 文档：https://www.artd.pro/docs/zh/guide/hooks/use-table.html -->
 <template>
-  <div class="user-page art-full-height">
+  <div class="user-page logx-full-height">
     <!-- 搜索栏 -->
     <UserSearch v-model="searchForm" @search="handleSearch" @reset="resetSearchParams"></UserSearch>
 
-    <ElCard class="art-table-card">
+    <ElCard class="logx-table-card">
       <!-- 表格头部 -->
-      <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
+      <LogxTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
         <template #left>
           <ElSpace wrap>
             <ElButton @click="showDialog('add')" v-ripple>新增用户</ElButton>
           </ElSpace>
         </template>
-      </ArtTableHeader>
+      </LogxTableHeader>
 
       <!-- 表格 -->
-      <ArtTable
+      <LogxTable
         :loading="loading"
         :data="data"
         :columns="columns"
@@ -28,7 +28,7 @@
         @pagination:size-change="handleSizeChange"
         @pagination:current-change="handleCurrentChange"
       >
-      </ArtTable>
+      </LogxTable>
 
       <!-- 用户弹窗 -->
       <UserDialog
@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-  import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
+  import LogxButtonTable from '@/components/core/forms/logx-button-table/index.vue'
   import { ACCOUNT_TABLE_DATA } from '@/mock/temp/formData'
   import { useTable } from '@/hooks/core/useTable'
   import { fetchGetUserList } from '@/api/system-manage'
@@ -169,13 +169,13 @@
           fixed: 'right', // 固定列
           formatter: (row) =>
             h('div', [
-              h(ArtButtonTable, {
+              h(LogxButtonTable, {
                 type: 'edit',
                 onClick: () => showDialog('edit', row)
               }),
-              h(ArtButtonTable, {
+              h(LogxButtonTable, {
                 type: 'delete',
-                onClick: () => deleteUser(row)
+                onClick: () => deleteUser()
               })
             ])
         }
@@ -215,7 +215,6 @@
    * 显示用户弹窗
    */
   const showDialog = (type: DialogType, row?: UserListItem): void => {
-    console.log('打开弹窗:', { type, row })
     dialogType.value = type
     currentUserData.value = row || {}
     nextTick(() => {
@@ -226,8 +225,7 @@
   /**
    * 删除用户
    */
-  const deleteUser = (row: UserListItem): void => {
-    console.log('删除用户:', row)
+  const deleteUser = (): void => {
     ElMessageBox.confirm(`确定要注销该用户吗？`, '注销用户', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
@@ -254,6 +252,5 @@
    */
   const handleSelectionChange = (selection: UserListItem[]): void => {
     selectedRows.value = selection
-    console.log('选中行数据:', selectedRows.value)
   }
 </script>

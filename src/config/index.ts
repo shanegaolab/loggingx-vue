@@ -26,7 +26,7 @@
  * - headerBar: 顶部栏功能配置
  *
  * @module config
- * @author Art Design Pro Team
+ * @author Logx Design Pro Team
  */
 
 import { MenuThemeEnum, MenuTypeEnum, SystemThemeEnum } from '@/enums/appEnum'
@@ -38,7 +38,7 @@ import { headerBarConfig } from './modules/headerBar'
 const appConfig: SystemConfig = {
   // 系统信息
   systemInfo: {
-    name: 'AssistantX' // 系统名称
+    name: 'LoggingX' // 系统名称
   },
   // 系统主题
   systemThemeStyles: {
@@ -84,7 +84,7 @@ const appConfig: SystemConfig = {
     {
       theme: MenuThemeEnum.DESIGN,
       background: '#FFFFFF',
-      systemNameColor: 'var(--art-gray-800)',
+      systemNameColor: 'var(--logx-gray-800)',
       iconColor: '#52525B',
       textColor: '#18181B',
       img: configImages.menuStyles.design
@@ -100,7 +100,7 @@ const appConfig: SystemConfig = {
     {
       theme: MenuThemeEnum.LIGHT,
       background: '#ffffff',
-      systemNameColor: 'var(--art-gray-800)',
+      systemNameColor: 'var(--logx-gray-800)',
       iconColor: '#52525B',
       textColor: '#18181B',
       img: configImages.menuStyles.light

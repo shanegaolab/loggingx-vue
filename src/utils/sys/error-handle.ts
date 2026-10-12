@@ -27,7 +27,7 @@
  * - ResourceError: 静态资源加载失败
  *
  * @module utils/sys/error-handle
- * @author Art Design Pro Team
+ * @author Logx Design Pro Team
  */
 import type { App } from 'vue'
 
@@ -71,7 +71,7 @@ function isIgnorableScriptError(message: Event | string, source?: string): boole
 /**
  * Vue 运行时错误处理
  */
-export function vueErrorHandler(err: unknown, instance: any, info: string) {
+export function vueErrorHandler(err: unknown, instance: unknown, info: string) {
   console.error('[VueError]', err, info, instance)
   // 这里可以上报到服务端，比如：
   // reportError({ type: 'vue', err, info })

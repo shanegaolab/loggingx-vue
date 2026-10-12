@@ -4,31 +4,31 @@
 /* ==================== Light Mode Variables ==================== */
 :root {
   /* Base Colors */
-  --art-color: #ffffff;
+  --logx-color: #ffffff;
   --theme-color: var(--main-color);
 
   /* Theme Colors - OKLCH Format */
-  --art-primary: #000000;
-  --art-secondary: #1f1f1f;
-  --art-error: #262626;
-  --art-info: #6b7280;
-  --art-success: #111111;
-  --art-warning: #737373;
-  --art-danger: #000000;
+  --logx-primary: #000000;
+  --logx-secondary: #1f1f1f;
+  --logx-error: #262626;
+  --logx-info: #6b7280;
+  --logx-success: #111111;
+  --logx-warning: #737373;
+  --logx-danger: #000000;
 
   /* Gray Scale - Light Mode */
-  --art-gray-100: #fafafa;
-  --art-gray-200: #f4f4f5;
-  --art-gray-300: #e4e4e7;
-  --art-gray-400: #d4d4d8;
-  --art-gray-500: #a1a1aa;
-  --art-gray-600: #71717a;
-  --art-gray-700: #52525b;
-  --art-gray-800: #27272a;
-  --art-gray-900: #18181b;
+  --logx-gray-100: #fafafa;
+  --logx-gray-200: #f4f4f5;
+  --logx-gray-300: #e4e4e7;
+  --logx-gray-400: #d4d4d8;
+  --logx-gray-500: #a1a1aa;
+  --logx-gray-600: #71717a;
+  --logx-gray-700: #52525b;
+  --logx-gray-800: #27272a;
+  --logx-gray-900: #18181b;
 
   /* Border Colors */
-  --art-card-border: rgba(0, 0, 0, 0.08);
+  --logx-card-border: rgba(0, 0, 0, 0.08);
 
   --default-border: #e5e5e5;
   --default-border-dashed: #d4d4d4;
@@ -38,40 +38,40 @@
   --default-box-color: #ffffff;
 
   /* Hover Color */
-  --art-hover-color: #f0f0f0;
+  --logx-hover-color: #f0f0f0;
 
   /* Active Color */
-  --art-active-color: #eeeeee;
+  --logx-active-color: #eeeeee;
 
   /* Element Component Active Color */
-  --art-el-active-color: #eeeeee;
+  --logx-el-active-color: #eeeeee;
 }
 
 /* ==================== Dark Mode Variables ==================== */
 .dark {
   /* Base Colors */
-  --art-color: #000000;
-  --art-primary: #ffffff;
-  --art-secondary: #e5e5e5;
-  --art-error: #d4d4d4;
-  --art-info: #a3a3a3;
-  --art-success: #f5f5f5;
-  --art-warning: #a3a3a3;
-  --art-danger: #ffffff;
+  --logx-color: #000000;
+  --logx-primary: #ffffff;
+  --logx-secondary: #e5e5e5;
+  --logx-error: #d4d4d4;
+  --logx-info: #a3a3a3;
+  --logx-success: #f5f5f5;
+  --logx-warning: #a3a3a3;
+  --logx-danger: #ffffff;
 
   /* Gray Scale - Dark Mode */
-  --art-gray-100: #09090b;
-  --art-gray-200: #18181b;
-  --art-gray-300: #27272a;
-  --art-gray-400: #3f3f46;
-  --art-gray-500: #71717a;
-  --art-gray-600: #a1a1aa;
-  --art-gray-700: #d4d4d8;
-  --art-gray-800: #e4e4e7;
-  --art-gray-900: #fafafa;
+  --logx-gray-100: #09090b;
+  --logx-gray-200: #18181b;
+  --logx-gray-300: #27272a;
+  --logx-gray-400: #3f3f46;
+  --logx-gray-500: #71717a;
+  --logx-gray-600: #a1a1aa;
+  --logx-gray-700: #d4d4d8;
+  --logx-gray-800: #e4e4e7;
+  --logx-gray-900: #fafafa;
 
   /* Border Colors */
-  --art-card-border: rgba(255, 255, 255, 0.08);
+  --logx-card-border: rgba(255, 255, 255, 0.08);
 
   --default-border: rgba(255, 255, 255, 0.1);
   --default-border-dashed: #3f3f46;
@@ -81,13 +81,13 @@
   --default-box-color: #111111;
 
   /* Hover Color */
-  --art-hover-color: #1f1f1f;
+  --logx-hover-color: #1f1f1f;
 
   /* Active Color */
-  --art-active-color: #242424;
+  --logx-active-color: #242424;
 
   /* Element Component Active Color */
-  --art-el-active-color: #2a2a2a;
+  --logx-el-active-color: #2a2a2a;
 }
 
 /* ==================== Tailwind Theme Configuration ==================== */
@@ -99,33 +99,33 @@
   --color-theme: var(--theme-color);
 
   /* Hover Color */
-  --color-hover-color: var(--art-hover-color);
+  --color-hover-color: var(--logx-hover-color);
 
   /* Active Color */
-  --color-active-color: var(--art-active-color);
+  --color-active-color: var(--logx-active-color);
 
   /* Active Color */
-  --color-el-active-color: var(--art-active-color);
+  --color-el-active-color: var(--logx-active-color);
 
   /* ElementPlus Theme Colors */
-  --color-primary: var(--art-primary);
-  --color-secondary: var(--art-secondary);
-  --color-error: var(--art-error);
-  --color-info: var(--art-info);
-  --color-success: var(--art-success);
-  --color-warning: var(--art-warning);
-  --color-danger: var(--art-danger);
+  --color-primary: var(--logx-primary);
+  --color-secondary: var(--logx-secondary);
+  --color-error: var(--logx-error);
+  --color-info: var(--logx-info);
+  --color-success: var(--logx-success);
+  --color-warning: var(--logx-warning);
+  --color-danger: var(--logx-danger);
 
   /* Gray Scale Colors (Auto-adapts to dark mode) */
-  --color-g-100: var(--art-gray-100);
-  --color-g-200: var(--art-gray-200);
-  --color-g-300: var(--art-gray-300);
-  --color-g-400: var(--art-gray-400);
-  --color-g-500: var(--art-gray-500);
-  --color-g-600: var(--art-gray-600);
-  --color-g-700: var(--art-gray-700);
-  --color-g-800: var(--art-gray-800);
-  --color-g-900: var(--art-gray-900);
+  --color-g-100: var(--logx-gray-100);
+  --color-g-200: var(--logx-gray-200);
+  --color-g-300: var(--logx-gray-300);
+  --color-g-400: var(--logx-gray-400);
+  --color-g-500: var(--logx-gray-500);
+  --color-g-600: var(--logx-gray-600);
+  --color-g-700: var(--logx-gray-700);
+  --color-g-800: var(--logx-gray-800);
+  --color-g-900: var(--logx-gray-900);
 }
 
 /* ==================== Custom Border Radius Utilities ==================== */
@@ -194,8 +194,8 @@
 
 /* ==================== Custom Component Classes ==================== */
 @layer components {
-  /* Art Card Header Component */
-  .art-card-header {
+  /* Logx Card Header Component */
+  .logx-card-header {
     @apply flex justify-between pr-6 pb-1;
 
     .title {

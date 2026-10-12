@@ -30,7 +30,7 @@
  * - KEEP_ALL: 不清除缓存（适用于只读操作）
  *
  * @module utils/table/tableCache
- * @author Art Design Pro Team
+ * @author Logx Design Pro Team
  */
 import { hash } from 'ohash'
 
@@ -85,7 +85,7 @@ export class TableCache<T> {
   }
 
   // 内部日志工具
-  private log(message: string, ...args: any[]) {
+  private log(message: string, ...args: unknown[]) {
     if (this.enableLog) {
       console.log(`[TableCache] ${message}`, ...args)
     }
@@ -126,25 +126,25 @@ export class TableCache<T> {
 
   // 🔧 优化：LRU 缓存清理
   private evictLRU(): void {
-    if (this.cache.size <= this.maxSize) return
+    while (this.cache.size > this.maxSize) {
+      // 找到最少使用的缓存项
+      let lruKey: string | undefined
+      let minAccessCount = Infinity
+      let oldestTime = Infinity
 
-    // 找到最少使用的缓存项
-    let lruKey = ''
-    let minAccessCount = Infinity
-    let oldestTime = Infinity
-
-    for (const [key, item] of this.cache.entries()) {
-      if (
-        item.accessCount < minAccessCount ||
-        (item.accessCount === minAccessCount && item.lastAccessTime < oldestTime)
-      ) {
-        lruKey = key
-        minAccessCount = item.accessCount
-        oldestTime = item.lastAccessTime
+      for (const [key, item] of this.cache.entries()) {
+        if (
+          item.accessCount < minAccessCount ||
+          (item.accessCount === minAccessCount && item.lastAccessTime < oldestTime)
+        ) {
+          lruKey = key
+          minAccessCount = item.accessCount
+          oldestTime = item.lastAccessTime
+        }
       }
-    }
 
-    if (lruKey) {
+      if (!lruKey) return
+
       this.cache.delete(lruKey)
       this.log(`LRU 清理缓存: ${lruKey}`)
     }
@@ -156,9 +156,6 @@ export class TableCache<T> {
     const tags = this.generateTags(params as Record<string, unknown>)
     const now = Date.now()
 
-    // 检查是否需要清理
-    this.evictLRU()
-
     this.cache.set(key, {
       data,
       response,
@@ -168,6 +165,9 @@ export class TableCache<T> {
       accessCount: 1,
       lastAccessTime: now
     })
+
+    // 先写入再淘汰，确保缓存条目数始终不超过 maxSize。
+    this.evictLRU()
   }
 
   // 获取缓存

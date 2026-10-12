@@ -30,7 +30,7 @@
  * 5. 异常时提示用户并执行登出
  *
  * @module utils/storage/storage
- * @author Art Design Pro Team
+ * @author Logx Design Pro Team
  */
 import { router } from '@/router'
 import { useUserStore } from '@/store/modules/user'
@@ -51,7 +51,7 @@ class StorageCompatibilityManager {
   /**
    * 获取系统存储数据（兼容旧格式）
    */
-  getSystemStorage(): any {
+  getSystemStorage(): Record<string, unknown> | null {
     const version = this.getSystemVersion() || StorageConfig.CURRENT_VERSION
     const legacyKey = StorageConfig.generateLegacyKey(version)
     const data = localStorage.getItem(legacyKey)
@@ -222,7 +222,7 @@ const storageManager = new StorageCompatibilityManager()
 /**
  * 获取系统存储数据
  */
-export function getSystemStorage(): any {
+export function getSystemStorage(): Record<string, unknown> | null {
   return storageManager.getSystemStorage()
 }
 

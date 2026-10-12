@@ -144,7 +144,6 @@
     (newVal) => {
       if (newVal && props.roleData) {
         // TODO: 根据角色加载对应的权限数据
-        console.log('设置权限:', props.roleData)
       }
     }
   )

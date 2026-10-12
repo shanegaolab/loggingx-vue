@@ -18,7 +18,7 @@
  * - en: English
  *
  * @module locales
- * @author Art Design Pro Team
+ * @author Logx Design Pro Team
  */
 
 import { createI18n } from 'vue-i18n'
@@ -77,7 +77,7 @@ const getDefaultLanguage = (): LanguageEnum => {
   try {
     const sys = getSystemStorage()
     if (sys) {
-      const { user } = JSON.parse(sys)
+      const user = sys.user as { language?: LanguageEnum } | undefined
       if (user?.language && Object.values(LanguageEnum).includes(user.language)) {
         return user.language
       }

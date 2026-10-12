@@ -1,6 +1,6 @@
 <template>
-  <div class="art-card h-105 p-4 box-border mb-5 max-sm:mb-4">
-    <ArtBarChart
+  <div class="logx-card h-105 p-4 box-border mb-5 max-sm:mb-4">
+    <LogxBarChart
       class="box-border p-2"
       barWidth="50%"
       height="13.7rem"

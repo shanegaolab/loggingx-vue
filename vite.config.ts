@@ -15,6 +15,8 @@ export default ({ mode }: { mode: string }) => {
   const root = process.cwd()
   const env = loadEnv(mode, root)
   const { VITE_VERSION, VITE_PORT, VITE_BASE_URL, VITE_API_URL, VITE_API_PROXY_URL } = env
+  // 生产构建是否移除 console（由 .env.production 的 VITE_DROP_CONSOLE 控制，之前写死为 true）
+  const dropConsole = env.VITE_DROP_CONSOLE !== 'false'
 
   console.log(`🚀 API_URL = ${VITE_API_URL}`)
   console.log(`🚀 VERSION = ${VITE_VERSION}`)
@@ -43,6 +45,7 @@ export default ({ mode }: { mode: string }) => {
         '@icons': resolvePath('src/assets/icons'),
         '@utils': resolvePath('src/utils'),
         '@stores': resolvePath('src/store'),
+        '@plugins': resolvePath('src/plugins'),
         '@styles': resolvePath('src/assets/styles')
       }
     },
@@ -54,9 +57,22 @@ export default ({ mode }: { mode: string }) => {
       terserOptions: {
         compress: {
           // 生产环境去除 console
-          drop_console: true,
+          drop_console: dropConsole,
           // 生产环境去除 debugger
           drop_debugger: true
+        }
+      },
+      rollupOptions: {
+        output: {
+          // 拆分大体积第三方依赖：业务代码更新时这些 chunk 的 hash 不变，浏览器可继续使用缓存
+          manualChunks(id) {
+            if (!id.includes('node_modules')) return
+            if (/[\\/]node_modules[\\/](echarts|zrender)[\\/]/.test(id)) return 'vendor-echarts'
+            if (/[\\/]node_modules[\\/](element-plus|@element-plus)[\\/]/.test(id))
+              return 'vendor-element'
+            if (/[\\/]node_modules[\\/](vue|@vue|vue-router|pinia|vue-i18n|@intlify)[\\/]/.test(id))
+              return 'vendor-vue'
+          }
         }
       },
       dynamicImportVarsOptions: {

@@ -3,7 +3,7 @@
   <div class="w-full h-full p-0 bg-transparent border-none shadow-none">
     <div class="relative flex-b mt-2.5 max-md:block max-md:mt-1">
       <div class="w-112 mr-5 max-md:w-full max-md:mr-0">
-        <div class="art-card-sm relative p-9 pb-6 overflow-hidden text-center">
+        <div class="logx-card-sm relative p-9 pb-6 overflow-hidden text-center">
           <img class="absolute top-0 left-0 w-full h-50 object-cover" src="@imgs/user/bg.webp" />
           <img
             class="relative z-10 w-20 h-20 mt-30 mx-auto object-cover border-2 border-white rounded-full"
@@ -14,19 +14,19 @@
 
           <div class="w-75 mx-auto mt-7.5 text-left">
             <div class="mt-2.5">
-              <ArtSvgIcon icon="ri:mail-line" class="text-g-700" />
+              <LogxSvgIcon icon="ri:mail-line" class="text-g-700" />
               <span class="ml-2 text-sm">jdkjjfnndf@mall.com</span>
             </div>
             <div class="mt-2.5">
-              <ArtSvgIcon icon="ri:user-3-line" class="text-g-700" />
+              <LogxSvgIcon icon="ri:user-3-line" class="text-g-700" />
               <span class="ml-2 text-sm">交互专家</span>
             </div>
             <div class="mt-2.5">
-              <ArtSvgIcon icon="ri:map-pin-line" class="text-g-700" />
+              <LogxSvgIcon icon="ri:map-pin-line" class="text-g-700" />
               <span class="ml-2 text-sm">广东省深圳市</span>
             </div>
             <div class="mt-2.5">
-              <ArtSvgIcon icon="ri:dribbble-fill" class="text-g-700" />
+              <LogxSvgIcon icon="ri:dribbble-fill" class="text-g-700" />
               <span class="ml-2 text-sm">字节跳动－某某平台部－UED</span>
             </div>
           </div>
@@ -46,7 +46,7 @@
         </div>
       </div>
       <div class="flex-1 overflow-hidden max-md:w-full max-md:mt-3.5">
-        <div class="art-card-sm">
+        <div class="logx-card-sm">
           <h1 class="p-4 text-xl font-normal border-b border-g-300">基本设置</h1>
 
           <ElForm
@@ -103,7 +103,7 @@
           </ElForm>
         </div>
 
-        <div class="art-card-sm my-5">
+        <div class="logx-card-sm my-5">
           <h1 class="p-4 text-xl font-normal border-b border-g-300">更改密码</h1>
 
           <ElForm :model="pwdForm" class="box-border p-5" label-width="86px" label-position="top">
@@ -170,7 +170,7 @@
     mobile: '18888888888',
     address: '广东省深圳市宝安区西乡街道101栋201',
     sex: '2',
-    des: 'Art Design Pro 是一款兼具设计美学与高效开发的后台系统.'
+    des: 'Logx Design Pro 是一款兼具设计美学与高效开发的后台系统.'
   })
 
   /**

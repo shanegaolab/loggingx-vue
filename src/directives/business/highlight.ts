@@ -38,11 +38,38 @@
  * - 智能监听：只在有新代码块时才触发处理
  *
  * @module directives/highlight
- * @author Art Design Pro Team
+ * @author Logx Design Pro Team
  */
 
 import { App, Directive } from 'vue'
-import hljs from 'highlight.js'
+
+type HighlightEl = HTMLElement & { _highlightObserver?: MutationObserver }
+// 只引入 core 并按需注册语言：完整版 highlight.js 含 190+ 种语言（约 1MB），会全部打进首屏主包
+import hljs from 'highlight.js/lib/core'
+import java from 'highlight.js/lib/languages/java'
+import python from 'highlight.js/lib/languages/python'
+import javascript from 'highlight.js/lib/languages/javascript'
+import typescript from 'highlight.js/lib/languages/typescript'
+import json from 'highlight.js/lib/languages/json'
+import xml from 'highlight.js/lib/languages/xml'
+import yaml from 'highlight.js/lib/languages/yaml'
+import sql from 'highlight.js/lib/languages/sql'
+import bash from 'highlight.js/lib/languages/bash'
+import diff from 'highlight.js/lib/languages/diff'
+import plaintext from 'highlight.js/lib/languages/plaintext'
+
+// 日志平台常用语言：后端栈（Java/Python）、前端（JS/TS/Vue→xml）、配置、SQL、补丁 diff（AI 修复建议）
+hljs.registerLanguage('java', java)
+hljs.registerLanguage('python', python)
+hljs.registerLanguage('javascript', javascript)
+hljs.registerLanguage('typescript', typescript)
+hljs.registerLanguage('json', json)
+hljs.registerLanguage('xml', xml)
+hljs.registerLanguage('yaml', yaml)
+hljs.registerLanguage('sql', sql)
+hljs.registerLanguage('bash', bash)
+hljs.registerLanguage('diff', diff)
+hljs.registerLanguage('plaintext', plaintext)
 
 export type HighlightDirective = Directive<HTMLElement>
 
@@ -225,7 +252,7 @@ const highlightDirective: HighlightDirective = {
     })
 
     // 将 observer 存储到元素上，以便在 unmounted 时清理
-    ;(el as any)._highlightObserver = observer
+    ;(el as HighlightEl)._highlightObserver = observer
   },
 
   updated(el: HTMLElement) {
@@ -237,10 +264,10 @@ const highlightDirective: HighlightDirective = {
 
   unmounted(el: HTMLElement) {
     // 清理 MutationObserver
-    const observer = (el as any)._highlightObserver
+    const observer = (el as HighlightEl)._highlightObserver
     if (observer) {
       observer.disconnect()
-      delete (el as any)._highlightObserver
+      delete (el as HighlightEl)._highlightObserver
     }
   }
 }

@@ -2,20 +2,20 @@
 <template>
   <div class="app-layout">
     <aside id="app-sidebar">
-      <ArtSidebarMenu />
+      <LogxSidebarMenu />
     </aside>
 
     <main id="app-main">
       <div id="app-header">
-        <ArtHeaderBar />
+        <LogxHeaderBar />
       </div>
       <div id="app-content">
-        <ArtPageContent />
+        <LogxPageContent />
       </div>
     </main>
 
     <div id="app-global">
-      <ArtGlobalComponent />
+      <LogxGlobalComponent />
     </div>
   </div>
 </template>

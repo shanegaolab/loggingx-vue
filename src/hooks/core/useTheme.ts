@@ -1,4 +1,4 @@
-﻿/**
+/**
  * useTheme - 绯荤粺涓婚绠＄悊
  *
  * 鎻愪緵瀹屾暣鐨勪富棰樺垏鎹㈠拰绠＄悊鍔熻兘锛屾敮鎸佷寒鑹层€佹殫鑹插拰鑷姩妯″紡銆?
@@ -28,7 +28,7 @@
  * ```
  *
  * @module useTheme
- * @author Art Design Pro Team
+ * @author Logx Design Pro Team
  */
 
 import { useSettingStore } from '@/store/modules/setting'

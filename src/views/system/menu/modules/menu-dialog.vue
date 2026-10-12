@@ -8,7 +8,7 @@
     class="menu-dialog"
     @closed="handleClosed"
   >
-    <ArtForm
+    <LogxForm
       ref="formRef"
       v-model="form"
       :items="formItems"
@@ -25,7 +25,7 @@
           <ElRadioButton value="button" label="button">按钮</ElRadioButton>
         </ElRadioGroup>
       </template>
-    </ArtForm>
+    </LogxForm>
 
     <template #footer>
       <span class="dialog-footer">
@@ -42,8 +42,8 @@
   import { QuestionFilled } from '@element-plus/icons-vue'
   import { formatMenuTitle } from '@/utils/router'
   import type { AppRouteRecord } from '@/types/router'
-  import type { FormItem } from '@/components/core/forms/art-form/index.vue'
-  import ArtForm from '@/components/core/forms/art-form/index.vue'
+  import type { FormItem } from '@/components/core/forms/logx-form/index.vue'
+  import LogxForm from '@/components/core/forms/logx-form/index.vue'
   import { useWindowSize } from '@vueuse/core'
 
   const { width } = useWindowSize()

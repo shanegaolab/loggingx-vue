@@ -32,7 +32,7 @@
  * 6. 更新本地版本号
  *
  * @module utils/sys/upgrade
- * @author Art Design Pro Team
+ * @author Logx Design Pro Team
  */
 import { upgradeLogList } from '@/mock/upgrade/changeLog'
 import { ElNotification } from 'element-plus'
@@ -133,7 +133,7 @@ class VersionManager {
     const { title: content } = upgradeLogList.value[0]
 
     const messageParts = [
-      `<p style="color: var(--art-gray-800) !important; padding-bottom: 5px;">`,
+      `<p style="color: var(--logx-gray-800) !important; padding-bottom: 5px;">`,
       `系统已升级到 ${StorageConfig.CURRENT_VERSION} 版本，此次更新带来了以下改进：`,
       `</p>`,
       content

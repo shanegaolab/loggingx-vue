@@ -1,8 +1,8 @@
 <!-- 菜单管理页面 -->
 <template>
-  <div class="menu-page art-full-height">
+  <div class="menu-page logx-full-height">
     <!-- 搜索栏 -->
-    <ArtSearchBar
+    <LogxSearchBar
       v-model="formFilters"
       :items="formItems"
       :showExpand="false"
@@ -10,9 +10,9 @@
       @search="handleSearch"
     />
 
-    <ElCard class="art-table-card">
+    <ElCard class="logx-table-card">
       <!-- 表格头部 -->
-      <ArtTableHeader
+      <LogxTableHeader
         :showZebra="false"
         :loading="loading"
         v-model:columns="columnChecks"
@@ -24,9 +24,9 @@
             {{ isExpanded ? '收起' : '展开' }}
           </ElButton>
         </template>
-      </ArtTableHeader>
+      </LogxTableHeader>
 
-      <ArtTable
+      <LogxTable
         ref="tableRef"
         rowKey="path"
         :loading="loading"
@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
   import { formatMenuTitle } from '@/utils/router'
-  import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
+  import LogxButtonTable from '@/components/core/forms/logx-button-table/index.vue'
   import { useTableColumns } from '@/hooks/core/useTableColumns'
   import type { AppRouteRecord } from '@/types/router'
   import MenuDialog from './modules/menu-dialog.vue'
@@ -199,11 +199,11 @@
 
         if (row.meta?.isAuthButton) {
           return h('div', buttonStyle, [
-            h(ArtButtonTable, {
+            h(LogxButtonTable, {
               type: 'edit',
               onClick: () => handleEditAuth(row)
             }),
-            h(ArtButtonTable, {
+            h(LogxButtonTable, {
               type: 'delete',
               onClick: () => handleDeleteAuth()
             })
@@ -211,16 +211,16 @@
         }
 
         return h('div', buttonStyle, [
-          h(ArtButtonTable, {
+          h(LogxButtonTable, {
             type: 'add',
             onClick: () => handleAddAuth(),
             title: '新增权限'
           }),
-          h(ArtButtonTable, {
+          h(LogxButtonTable, {
             type: 'edit',
             onClick: () => handleEditMenu(row)
           }),
-          h(ArtButtonTable, {
+          h(LogxButtonTable, {
             type: 'delete',
             onClick: () => handleDeleteMenu()
           })
@@ -397,24 +397,9 @@
   }
 
   /**
-   * 菜单表单数据类型
-   */
-  interface MenuFormData {
-    name: string
-    path: string
-    component?: string
-    icon?: string
-    roles?: string[]
-    sort?: number
-    [key: string]: any
-  }
-
-  /**
    * 提交表单数据
-   * @param formData 表单数据
    */
-  const handleSubmit = (formData: MenuFormData): void => {
-    console.log('提交数据:', formData)
+  const handleSubmit = (): void => {
     // TODO: 调用API保存数据
     getMenuList()
   }

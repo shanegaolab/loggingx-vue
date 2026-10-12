@@ -36,7 +36,7 @@
  * - createErrorHandler: 生成错误处理器
  *
  * @module utils/table/tableUtils
- * @author Art Design Pro Team
+ * @author Logx Design Pro Team
  */
 
 import type { ApiResponse } from './tableCache'
@@ -203,59 +203,56 @@ export const createSmartDebounce = <T extends (...args: any[]) => Promise<any>>(
   fn: T,
   delay: number
 ): T & { cancel: () => void; flush: () => Promise<any> } => {
-  let timeoutId: NodeJS.Timeout | null = null
-  let lastArgs: Parameters<T> | null = null
-  let lastResolve: ((value: any) => void) | null = null
-  let lastReject: ((reason: any) => void) | null = null
+  let timeoutId: ReturnType<typeof setTimeout> | null = null
+  let pendingCall: {
+    args: Parameters<T>
+    resolve: (value: any) => void
+    reject: (reason?: any) => void
+  } | null = null
+
+  const run = async (call: NonNullable<typeof pendingCall>): Promise<any> => {
+    try {
+      const result = await fn(...call.args)
+      call.resolve(result)
+      return result
+    } catch (error) {
+      call.reject(error)
+      throw error
+    }
+  }
 
   const debouncedFn = (...args: Parameters<T>): Promise<any> => {
     return new Promise((resolve, reject) => {
-      if (timeoutId) clearTimeout(timeoutId)
-      lastArgs = args
-      lastResolve = resolve
-      lastReject = reject
-      timeoutId = setTimeout(async () => {
-        try {
-          const result = await fn(...args)
-          resolve(result)
-        } catch (error) {
-          reject(error)
-        } finally {
-          timeoutId = null
-          lastArgs = null
-          lastResolve = null
-          lastReject = null
-        }
+      if (timeoutId !== null) clearTimeout(timeoutId)
+
+      // 被新调用替代的 Promise 不能继续悬挂；防抖调用只保留最后一次。
+      pendingCall?.resolve(undefined)
+      const call = { args, resolve, reject }
+      pendingCall = call
+      timeoutId = setTimeout(() => {
+        timeoutId = null
+        if (pendingCall !== call) return
+        pendingCall = null
+        // run 内部会 settle 调用方 Promise；捕获外层 Promise 避免重复触发 unhandledrejection。
+        void run(call).catch(() => undefined)
       }, delay)
     })
   }
 
   debouncedFn.cancel = () => {
-    if (timeoutId) clearTimeout(timeoutId)
+    if (timeoutId !== null) clearTimeout(timeoutId)
     timeoutId = null
-    lastArgs = null
-    lastResolve = null
-    lastReject = null
+    pendingCall?.resolve(undefined)
+    pendingCall = null
   }
 
   debouncedFn.flush = async () => {
-    if (timeoutId && lastArgs && lastResolve && lastReject) {
+    if (timeoutId !== null && pendingCall) {
       clearTimeout(timeoutId)
       timeoutId = null
-      const args = lastArgs
-      const resolve = lastResolve
-      const reject = lastReject
-      lastArgs = null
-      lastResolve = null
-      lastReject = null
-      try {
-        const result = await fn(...args)
-        resolve(result)
-        return result
-      } catch (error) {
-        reject(error)
-        throw error
-      }
+      const call = pendingCall
+      pendingCall = null
+      return run(call)
     }
     return Promise.resolve()
   }

@@ -1,5 +1,5 @@
 <template>
-  <ArtSearchBar
+  <LogxSearchBar
     ref="searchBarRef"
     v-model="formData"
     :items="formItems"
@@ -7,7 +7,7 @@
     @reset="handleReset"
     @search="handleSearch"
   >
-  </ArtSearchBar>
+  </LogxSearchBar>
 </template>
 
 <script setup lang="ts">

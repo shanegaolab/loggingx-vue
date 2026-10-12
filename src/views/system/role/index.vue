@@ -1,6 +1,6 @@
 <!-- 角色管理页面 -->
 <template>
-  <div class="art-full-height">
+  <div class="logx-full-height">
     <RoleSearch
       v-show="showSearchBar"
       v-model="searchForm"
@@ -8,8 +8,8 @@
       @reset="resetSearchParams"
     ></RoleSearch>
 
-    <ElCard class="art-table-card" :style="{ 'margin-top': showSearchBar ? '12px' : '0' }">
-      <ArtTableHeader
+    <ElCard class="logx-table-card" :style="{ 'margin-top': showSearchBar ? '12px' : '0' }">
+      <LogxTableHeader
         v-model:columns="columnChecks"
         v-model:showSearchBar="showSearchBar"
         :loading="loading"
@@ -20,10 +20,10 @@
             <ElButton @click="showDialog('add')" v-ripple>新增角色</ElButton>
           </ElSpace>
         </template>
-      </ArtTableHeader>
+      </LogxTableHeader>
 
       <!-- 表格 -->
-      <ArtTable
+      <LogxTable
         :loading="loading"
         :data="data"
         :columns="columns"
@@ -31,7 +31,7 @@
         @pagination:size-change="handleSizeChange"
         @pagination:current-change="handleCurrentChange"
       >
-      </ArtTable>
+      </LogxTable>
     </ElCard>
 
     <!-- 角色编辑弹窗 -->
@@ -52,10 +52,10 @@
 </template>
 
 <script setup lang="ts">
-  import { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue'
+  import { ButtonMoreItem } from '@/components/core/forms/logx-button-more/index.vue'
   import { useTable } from '@/hooks/core/useTable'
   import { fetchGetRoleList } from '@/api/system-manage'
-  import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue'
+  import LogxButtonMore from '@/components/core/forms/logx-button-more/index.vue'
   import RoleSearch from './modules/role-search.vue'
   import RoleEditDialog from './modules/role-edit-dialog.vue'
   import RolePermissionDialog from './modules/role-permission-dialog.vue'
@@ -155,7 +155,7 @@
           fixed: 'right',
           formatter: (row) =>
             h('div', [
-              h(ArtButtonMore, {
+              h(LogxButtonMore, {
                 list: [
                   {
                     key: 'permission',
