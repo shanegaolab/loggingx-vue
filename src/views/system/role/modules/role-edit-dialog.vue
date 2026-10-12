@@ -34,6 +34,7 @@
 
 <script setup lang="ts">
   import type { FormInstance, FormRules } from 'element-plus'
+  import { fetchCreateRole, fetchUpdateRole } from '@/api/system-manage'
 
   type RoleListItem = Api.SystemManage.RoleListItem
 
@@ -150,13 +151,24 @@
 
     try {
       await formRef.value.validate()
-      // TODO: 调用新增/编辑接口
-      const message = props.dialogType === 'add' ? '新增成功' : '修改成功'
-      ElMessage.success(message)
-      emit('success')
-      handleClose()
     } catch {
       // 表单校验未通过,错误提示由表单自身展示
+      return
     }
+
+    const payload: Api.SystemManage.RoleForm = {
+      roleName: form.roleName,
+      roleCode: form.roleCode,
+      description: form.description,
+      enabled: form.enabled
+    }
+    if (props.dialogType === 'add') {
+      await fetchCreateRole(payload)
+    } else {
+      await fetchUpdateRole(form.roleId, payload)
+    }
+    ElMessage.success(props.dialogType === 'add' ? '新增成功' : '修改成功')
+    emit('success')
+    handleClose()
   }
 </script>

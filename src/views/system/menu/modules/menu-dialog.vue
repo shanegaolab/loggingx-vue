@@ -30,7 +30,7 @@
     <template #footer>
       <span class="dialog-footer">
         <ElButton @click="handleCancel">取 消</ElButton>
-        <ElButton type="primary" @click="handleSubmit">确 定</ElButton>
+        <ElButton type="primary" :loading="submitting" @click="handleSubmit">确 定</ElButton>
       </span>
     </template>
   </ElDialog>
@@ -45,6 +45,7 @@
   import type { FormItem } from '@/components/core/forms/logx-form/index.vue'
   import LogxForm from '@/components/core/forms/logx-form/index.vue'
   import { useWindowSize } from '@vueuse/core'
+  import { fetchCreateMenu, fetchUpdateMenu } from '@/api/system-manage'
 
   const { width } = useWindowSize()
 
@@ -101,23 +102,30 @@
     editData?: AppRouteRecord | any
     type?: 'menu' | 'button'
     lockType?: boolean
+    /** 新增时的父级菜单 ID，0 表示一级菜单 */
+    parentId?: number
   }
 
   interface Emits {
     (e: 'update:visible', value: boolean): void
-    (e: 'submit', data: MenuFormData): void
+    /** 保存成功 */
+    (e: 'submit'): void
   }
 
   const props = withDefaults(defineProps<Props>(), {
     visible: false,
     type: 'menu',
-    lockType: false
+    lockType: false,
+    parentId: 0
   })
 
   const emit = defineEmits<Emits>()
 
   const formRef = ref()
   const isEdit = ref(false)
+  const submitting = ref(false)
+  // 编辑时菜单原始标题（可能是 i18n key，如 menus.system.user）
+  const originalTitle = ref('')
 
   const form = reactive<MenuFormData & { menuType: 'menu' | 'button' }>({
     menuType: 'menu',
@@ -294,7 +302,8 @@
     if (form.menuType === 'menu') {
       const row = props.editData
       form.id = row.id || 0
-      form.name = formatMenuTitle(row.meta?.title || '')
+      originalTitle.value = row.meta?.title || ''
+      form.name = formatMenuTitle(originalTitle.value)
       form.path = row.path || ''
       form.label = row.name || ''
       form.component = row.component || ''
@@ -315,6 +324,7 @@
       form.isFullPage = row.meta?.isFullPage ?? false
     } else {
       const row = props.editData
+      form.id = row.id || 0
       form.authName = row.title || ''
       form.authLabel = row.authMark || ''
       form.authIcon = row.icon || ''
@@ -330,11 +340,33 @@
 
     try {
       await formRef.value.validate()
-      emit('submit', { ...form })
-      ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
-      handleCancel()
     } catch {
       ElMessage.error('表单校验失败，请检查输入')
+      return
+    }
+
+    const payload: Api.SystemManage.MenuForm = {
+      ...form,
+      // 标题未修改时回传原始值，保留 i18n key
+      name:
+        isEdit.value && form.name === formatMenuTitle(originalTitle.value)
+          ? originalTitle.value
+          : form.name,
+      parentId: props.parentId
+    }
+
+    submitting.value = true
+    try {
+      if (isEdit.value) {
+        await fetchUpdateMenu(form.id, payload)
+      } else {
+        await fetchCreateMenu(payload)
+      }
+      ElMessage.success(`${isEdit.value ? '编辑' : '新增'}成功`)
+      emit('submit')
+      handleCancel()
+    } finally {
+      submitting.value = false
     }
   }
 
@@ -351,6 +383,7 @@
   const handleClosed = (): void => {
     resetForm()
     isEdit.value = false
+    originalTitle.value = ''
   }
 
   /**

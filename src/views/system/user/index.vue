@@ -45,7 +45,7 @@
   import LogxButtonTable from '@/components/core/forms/logx-button-table/index.vue'
   import { ACCOUNT_TABLE_DATA } from '@/mock/temp/formData'
   import { useTable } from '@/hooks/core/useTable'
-  import { fetchGetUserList } from '@/api/system-manage'
+  import { fetchDeleteUser, fetchGetUserList } from '@/api/system-manage'
   import UserSearch from './modules/user-search.vue'
   import UserDialog from './modules/user-dialog.vue'
   import { ElTag, ElMessageBox, ElImage } from 'element-plus'
@@ -71,6 +71,9 @@
     userEmail: undefined,
     status: '1'
   })
+
+  // 性别配置（后端存储 1 男 / 2 女）
+  const USER_GENDER_TEXT: Record<string, string> = { '1': '男', '2': '女' }
 
   // 用户状态配置
   const USER_STATUS_CONFIG = {
@@ -146,7 +149,7 @@
           prop: 'userGender',
           label: '性别',
           sortable: true,
-          formatter: (row) => row.userGender
+          formatter: (row) => USER_GENDER_TEXT[row.userGender] ?? ''
         },
         { prop: 'userPhone', label: '手机号' },
         {
@@ -175,7 +178,7 @@
               }),
               h(LogxButtonTable, {
                 type: 'delete',
-                onClick: () => deleteUser()
+                onClick: () => deleteUser(row)
               })
             ])
         }
@@ -225,26 +228,32 @@
   /**
    * 删除用户
    */
-  const deleteUser = (): void => {
-    ElMessageBox.confirm(`确定要注销该用户吗？`, '注销用户', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'error'
-    }).then(() => {
-      ElMessage.success('注销成功')
-    })
+  const deleteUser = async (row: UserListItem): Promise<void> => {
+    try {
+      await ElMessageBox.confirm(
+        `确定要删除用户"${row.userName}"吗？此操作不可恢复！`,
+        '删除用户',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        }
+      )
+    } catch {
+      return
+    }
+    await fetchDeleteUser(row.id)
+    ElMessage.success('删除成功')
+    refreshData()
   }
 
   /**
    * 处理弹窗提交事件
    */
-  const handleDialogSubmit = async () => {
-    try {
-      dialogVisible.value = false
-      currentUserData.value = {}
-    } catch (error) {
-      console.error('提交失败:', error)
-    }
+  const handleDialogSubmit = () => {
+    dialogVisible.value = false
+    currentUserData.value = {}
+    refreshData()
   }
 
   /**
