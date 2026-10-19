@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
   import { fetchCreateUser, fetchGetRoleOptions, fetchUpdateUser } from '@/api/system-manage'
-  import type { FormInstance, FormRules } from 'element-plus'
+  import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 
   interface Props {
     visible: boolean
@@ -110,7 +110,7 @@
     ],
     password: [
       { required: dialogType.value === 'add', message: '请输入密码', trigger: 'blur' },
-      { min: 6, max: 100, message: '长度在 6 到 100 个字符', trigger: 'blur' }
+      { min: 8, max: 100, message: '长度在 8 到 100 个字符', trigger: 'blur' }
     ],
     userPhone: [
       { required: true, message: '请输入手机号', trigger: 'blur' },
