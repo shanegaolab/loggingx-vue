@@ -158,6 +158,52 @@ declare namespace Api {
     /** 新增/编辑角色 */
     type RoleForm = Pick<RoleListItem, 'roleName' | 'roleCode' | 'description' | 'enabled'>
 
+    /** 部门（树形，叶子节点没有 children） */
+    interface DeptItem {
+      deptId: number
+      /** 0 表示一级部门 */
+      parentId: number
+      deptName: string
+      sort: number
+      leader?: string
+      phone?: string
+      email?: string
+      enabled: boolean
+      createTime: string
+      children?: DeptItem[]
+    }
+
+    /** 部门搜索参数 */
+    type DeptSearchParams = Partial<Pick<DeptItem, 'deptName' | 'enabled'>>
+
+    /** 新增/编辑部门 */
+    type DeptForm = Pick<
+      DeptItem,
+      'parentId' | 'deptName' | 'sort' | 'leader' | 'phone' | 'email' | 'enabled'
+    >
+
+    /** 岗位列表 */
+    type PostList = Api.Common.PaginatedResponse<PostListItem>
+
+    /** 岗位列表项 */
+    interface PostListItem {
+      postId: number
+      postCode: string
+      postName: string
+      sort: number
+      enabled: boolean
+      remark?: string
+      createTime: string
+    }
+
+    /** 岗位搜索参数 */
+    type PostSearchParams = Partial<
+      Pick<PostListItem, 'postCode' | 'postName' | 'enabled'> & Api.Common.CommonSearchParams
+    >
+
+    /** 新增/编辑岗位 */
+    type PostForm = Pick<PostListItem, 'postCode' | 'postName' | 'sort' | 'enabled' | 'remark'>
+
     /** 新增/编辑菜单或按钮（字段与菜单弹窗表单一致） */
     interface MenuForm {
       menuType: 'menu' | 'button'

@@ -89,6 +89,72 @@ export function fetchSaveRoleMenuIds(id: number, menuIds: number[]) {
   })
 }
 
+// ---------------- 部门管理 ----------------
+
+// 获取部门树（按名称、状态筛选时保留匹配部门的上级部门）
+export function fetchGetDeptTree(params?: Api.SystemManage.DeptSearchParams) {
+  return request.get<Api.SystemManage.DeptItem[]>({
+    url: '/api/dept/tree',
+    params
+  })
+}
+
+// 新增部门
+export function fetchCreateDept(data: Api.SystemManage.DeptForm) {
+  return request.post<Api.SystemManage.DeptItem>({
+    url: '/api/dept',
+    data
+  })
+}
+
+// 编辑部门
+export function fetchUpdateDept(id: number, data: Api.SystemManage.DeptForm) {
+  return request.put<Api.SystemManage.DeptItem>({
+    url: `/api/dept/${id}`,
+    data
+  })
+}
+
+// 删除部门（存在下级部门时不可删除）
+export function fetchDeleteDept(id: number) {
+  return request.del<void>({
+    url: `/api/dept/${id}`
+  })
+}
+
+// ---------------- 岗位管理 ----------------
+
+// 获取岗位列表
+export function fetchGetPostList(params: Api.SystemManage.PostSearchParams) {
+  return request.get<Api.SystemManage.PostList>({
+    url: '/api/post/list',
+    params
+  })
+}
+
+// 新增岗位
+export function fetchCreatePost(data: Api.SystemManage.PostForm) {
+  return request.post<Api.SystemManage.PostListItem>({
+    url: '/api/post',
+    data
+  })
+}
+
+// 编辑岗位
+export function fetchUpdatePost(id: number, data: Api.SystemManage.PostForm) {
+  return request.put<Api.SystemManage.PostListItem>({
+    url: `/api/post/${id}`,
+    data
+  })
+}
+
+// 删除岗位
+export function fetchDeletePost(id: number) {
+  return request.del<void>({
+    url: `/api/post/${id}`
+  })
+}
+
 // ---------------- 菜单管理 ----------------
 
 // 获取当前用户的菜单（后端权限模式下用于生成路由）
