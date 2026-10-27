@@ -257,6 +257,23 @@
       "notFound": "404",
       "serverError": "500"
     },
+    "log": {
+      "title": "Logs",
+      "store": "Log Stores",
+      "query": "Log Search",
+      "tail": "Live Logs",
+      "agent": "Collection Agent"
+    },
+    "monitor": {
+      "title": "Monitoring",
+      "host": "Hosts"
+    },
+    "alert": {
+      "title": "Alerts"
+    },
+    "backup": {
+      "title": "Log Backup"
+    },
     "system": {
       "title": "System Settings",
       "user": "User Manage",

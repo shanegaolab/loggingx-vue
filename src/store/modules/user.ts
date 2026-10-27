@@ -42,6 +42,7 @@ import { setPageTitle } from '@/utils/router'
 import { resetRouterState } from '@/router/guards/beforeEach'
 import { useMenuStore } from './menu'
 import { StorageConfig } from '@/utils/storage/storage-config'
+import { RoutesAlias } from '@/router/routesAlias'
 
 /**
  * 用户状态管理
@@ -170,9 +171,9 @@ export const useUserStore = defineStore(
       // 重置路由状态
       resetRouterState(500)
       if (!navigate) return
-      // 跳转到登录页，携带当前路由作为 redirect 参数
+      // 跳转到登录页，携带当前路由作为 redirect 参数（已在登录页时不携带，避免 redirect 指回登录页）
       const currentRoute = router.currentRoute.value
-      const redirect = currentRoute.path !== '/login' ? currentRoute.fullPath : undefined
+      const redirect = currentRoute.path !== RoutesAlias.Login ? currentRoute.fullPath : undefined
       router.push({
         name: 'Login',
         query: redirect ? { redirect } : undefined

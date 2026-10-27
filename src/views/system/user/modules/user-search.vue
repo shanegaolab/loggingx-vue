@@ -11,6 +11,8 @@
 </template>
 
 <script setup lang="ts">
+  import { fetchGetDeptOptions } from '@/api/system-manage'
+
   interface Props {
     modelValue: Api.SystemManage.UserSearchParams
   }
@@ -51,7 +53,11 @@
     })
   }
 
+  // 部门树（按部门筛选时包含其下级部门的用户）
+  const deptTree = ref<Api.SystemManage.DeptItem[]>([])
+
   onMounted(async () => {
+    fetchGetDeptOptions().then((depts) => (deptTree.value = depts))
     statusOptions.value = await fetchStatusOptions()
   })
 
@@ -63,6 +69,21 @@
       type: 'input',
       placeholder: '请输入用户名',
       clearable: true
+    },
+    {
+      label: '部门',
+      key: 'deptId',
+      type: 'treeselect',
+      props: {
+        data: deptTree.value,
+        props: { label: 'deptName', children: 'children' },
+        nodeKey: 'deptId',
+        checkStrictly: true,
+        defaultExpandAll: true,
+        clearable: true,
+        renderAfterExpand: false,
+        placeholder: '请选择部门'
+      }
     },
     {
       label: '手机号',

@@ -69,6 +69,7 @@
     userGender: undefined,
     userPhone: undefined,
     userEmail: undefined,
+    deptId: undefined,
     status: '1'
   })
 
@@ -152,6 +153,17 @@
           formatter: (row) => USER_GENDER_TEXT[row.userGender] ?? ''
         },
         { prop: 'userPhone', label: '手机号' },
+        {
+          prop: 'deptName',
+          label: '部门',
+          formatter: (row) => row.deptName ?? ''
+        },
+        {
+          prop: 'postNames',
+          label: '岗位',
+          showOverflowTooltip: true,
+          formatter: (row) => (row.postNames ?? []).join('、')
+        },
         {
           prop: 'status',
           label: '状态',

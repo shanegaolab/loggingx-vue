@@ -34,7 +34,12 @@ export default ({ mode }: { mode: string }) => {
           changeOrigin: true
         }
       },
-      host: true
+      host: true,
+      // 预热页面模块：dev 服务启动后在后台提前转换所有页面（含 Element Plus 组件的 SCSS 主题样式），
+      // 避免首次登录、首次打开某个菜单页时现场编译导致卡顿
+      warmup: {
+        clientFiles: ['./src/views/**/*.vue']
+      }
     },
     // 路径别名
     resolve: {
@@ -124,6 +129,9 @@ export default ({ mode }: { mode: string }) => {
     ],
     // 依赖预构建：避免运行时重复请求与转换，提升首次加载速度
     optimizeDeps: {
+      // 页面通过 import.meta.glob 动态加载，启动时一并扫描所有页面的依赖，
+      // 避免首次打开某个页面才发现新依赖，触发重新预构建并整页刷新
+      entries: ['index.html', 'src/views/**/*.vue'],
       include: [
         'echarts/core',
         'echarts/charts',

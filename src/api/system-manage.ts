@@ -99,6 +99,13 @@ export function fetchGetDeptTree(params?: Api.SystemManage.DeptSearchParams) {
   })
 }
 
+// 获取完整部门树（含停用部门），供用户弹窗等选择器使用，用户管理权限即可访问
+export function fetchGetDeptOptions() {
+  return request.get<Api.SystemManage.DeptItem[]>({
+    url: '/api/dept/options'
+  })
+}
+
 // 新增部门
 export function fetchCreateDept(data: Api.SystemManage.DeptForm) {
   return request.post<Api.SystemManage.DeptItem>({
@@ -115,7 +122,7 @@ export function fetchUpdateDept(id: number, data: Api.SystemManage.DeptForm) {
   })
 }
 
-// 删除部门（存在下级部门时不可删除）
+// 删除部门（存在下级部门或用户时不可删除）
 export function fetchDeleteDept(id: number) {
   return request.del<void>({
     url: `/api/dept/${id}`
@@ -129,6 +136,13 @@ export function fetchGetPostList(params: Api.SystemManage.PostSearchParams) {
   return request.get<Api.SystemManage.PostList>({
     url: '/api/post/list',
     params
+  })
+}
+
+// 获取全部岗位（含停用岗位），供用户弹窗等选择器使用，用户管理权限即可访问
+export function fetchGetPostOptions() {
+  return request.get<Api.SystemManage.PostListItem[]>({
+    url: '/api/post/options'
   })
 }
 

@@ -4,6 +4,7 @@ import { staticRoutes } from './routes/staticRoutes'
 import { configureNProgress } from '@/utils/router'
 import { setupBeforeEachGuard } from './guards/beforeEach'
 import { setupAfterEachGuard } from './guards/afterEach'
+import { setupErrorHandler } from './guards/onError'
 
 // 创建路由实例
 export const router = createRouter({
@@ -16,6 +17,7 @@ export function initRouter(app: App<Element>): void {
   configureNProgress() // 顶部进度条
   setupBeforeEachGuard(router) // 路由前置守卫
   setupAfterEachGuard(router) // 路由后置守卫
+  setupErrorHandler(router) // 页面代码加载失败等导航错误
   app.use(router)
 }
 

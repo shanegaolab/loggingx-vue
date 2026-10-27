@@ -47,6 +47,8 @@ import { RoutesAlias } from '../routesAlias'
 import { staticRoutes } from '../routes/staticRoutes'
 import { loadingService } from '@/utils/ui'
 import { useCommon } from '@/hooks/core/useCommon'
+import { useAppMode } from '@/hooks/core/useAppMode'
+import type { AppRouteRecord } from '@/types/router'
 import { useWorktabStore } from '@/store/modules/worktab'
 import { fetchGetUserInfo } from '@/api/auth'
 import { ApiStatus } from '@/utils/http/status'
@@ -268,11 +270,8 @@ async function handleDynamicRoutes(
   loadingService.showLoading()
 
   try {
-    // 1. 获取用户信息
-    await fetchUserInfo()
-
-    // 2. 获取菜单数据
-    const menuList = await menuProcessor.getMenuList()
+    // 1-2. 获取用户信息和菜单数据
+    const menuList = await fetchUserInfoAndMenu()
 
     // 3. 验证菜单数据
     if (!menuProcessor.validateMenuList(menuList)) {
@@ -368,6 +367,21 @@ async function fetchUserInfo(): Promise<void> {
   userStore.setUserInfo(data)
   // 检查并清理工作台标签页（如果是不同用户登录）
   userStore.checkAndClearWorktabs()
+}
+
+/**
+ * 获取用户信息和菜单数据
+ * 后端模式下菜单不依赖用户信息，两个请求并行发出，缩短登录后首屏等待；
+ * 前端模式需要用户角色过滤菜单，只能串行
+ */
+async function fetchUserInfoAndMenu(): Promise<AppRouteRecord[]> {
+  const { isFrontendMode } = useAppMode()
+  if (isFrontendMode.value) {
+    await fetchUserInfo()
+    return menuProcessor.getMenuList()
+  }
+  const [, menuList] = await Promise.all([fetchUserInfo(), menuProcessor.getMenuList()])
+  return menuList
 }
 
 /**

@@ -13,6 +13,22 @@
       <ElFormItem label="岗位名称" prop="postName">
         <ElInput v-model="form.postName" placeholder="请输入岗位名称" maxlength="50" />
       </ElFormItem>
+      <ElFormItem label="适用部门" prop="deptIds">
+        <ElTreeSelect
+          v-model="form.deptIds"
+          :data="deptTree"
+          :props="{ label: 'deptName', children: 'children' }"
+          node-key="deptId"
+          multiple
+          show-checkbox
+          check-strictly
+          default-expand-all
+          clearable
+          :render-after-expand="false"
+          placeholder="不选表示适用全部部门"
+        />
+        <div class="mt-1 text-xs leading-4 text-g-500">选中部门的下级部门也可使用该岗位</div>
+      </ElFormItem>
       <ElFormItem label="排序" prop="sort">
         <ElInputNumber v-model="form.sort" :min="0" :max="9999" controls-position="right" />
       </ElFormItem>
@@ -38,7 +54,7 @@
 
 <script setup lang="ts">
   import type { FormInstance, FormRules } from 'element-plus'
-  import { fetchCreatePost, fetchUpdatePost } from '@/api/system-manage'
+  import { fetchCreatePost, fetchGetDeptOptions, fetchUpdatePost } from '@/api/system-manage'
 
   type PostListItem = Api.SystemManage.PostListItem
 
@@ -63,6 +79,7 @@
 
   const formRef = ref<FormInstance>()
   const submitting = ref(false)
+  const deptTree = ref<Api.SystemManage.DeptItem[]>([])
 
   const visible = computed({
     get: () => props.modelValue,
@@ -74,7 +91,8 @@
     postName: '',
     sort: 0,
     enabled: true,
-    remark: ''
+    remark: '',
+    deptIds: []
   })
 
   const form = reactive<Api.SystemManage.PostForm>(createEmptyForm())
@@ -93,14 +111,24 @@
   watch(
     () => props.modelValue,
     (newVal) => {
-      if (newVal) initForm()
+      if (newVal) {
+        initForm()
+        fetchGetDeptOptions().then((depts) => (deptTree.value = depts))
+      }
     }
   )
 
   const initForm = () => {
     if (props.dialogType === 'edit' && props.postData) {
-      const { postCode, postName, sort, enabled, remark } = props.postData
-      Object.assign(form, { postCode, postName, sort, enabled, remark: remark ?? '' })
+      const { postCode, postName, sort, enabled, remark, deptIds } = props.postData
+      Object.assign(form, {
+        postCode,
+        postName,
+        sort,
+        enabled,
+        remark: remark ?? '',
+        deptIds: [...(deptIds ?? [])]
+      })
     } else {
       Object.assign(form, createEmptyForm())
     }

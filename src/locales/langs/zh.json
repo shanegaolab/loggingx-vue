@@ -257,6 +257,23 @@
       "notFound": "404",
       "serverError": "500"
     },
+    "log": {
+      "title": "日志管理",
+      "store": "日志库管理",
+      "query": "日志查询",
+      "tail": "实时日志",
+      "agent": "采集 Agent"
+    },
+    "monitor": {
+      "title": "监控中心",
+      "host": "主机监控"
+    },
+    "alert": {
+      "title": "告警中心"
+    },
+    "backup": {
+      "title": "备份管理"
+    },
     "system": {
       "title": "系统管理",
       "user": "用户管理",

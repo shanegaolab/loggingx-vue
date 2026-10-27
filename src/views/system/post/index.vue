@@ -97,6 +97,13 @@
               ? h(ElTag, { type: 'success' }, () => '启用')
               : h(ElTag, { type: 'warning' }, () => '禁用')
         },
+        {
+          prop: 'deptNames',
+          label: '适用部门',
+          minWidth: 150,
+          showOverflowTooltip: true,
+          formatter: (row) => (row.deptNames?.length ? row.deptNames.join('、') : '全部部门')
+        },
         { prop: 'remark', label: '备注', minWidth: 150, showOverflowTooltip: true },
         { prop: 'createTime', label: '创建日期', width: 180, sortable: true },
         {

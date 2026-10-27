@@ -115,6 +115,7 @@
   import { fetchLogin } from '@/api/auth'
   import { ElNotification, type FormInstance, type FormRules } from 'element-plus'
   import { useSettingStore } from '@/store/modules/setting'
+  import { RoutesAlias } from '@/router/routesAlias'
 
   defineOptions({ name: 'Login' })
 
@@ -189,7 +190,18 @@
 
   onMounted(() => {
     setupAccount('super')
+    preloadLayout()
   })
+
+  // 空闲时预加载主布局，登录成功后无需再等待布局模块下载/编译
+  const preloadLayout = () => {
+    const load = () => import('@/views/index/index.vue').catch(() => {})
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(load, { timeout: 2000 })
+    } else {
+      setTimeout(load, 1000)
+    }
+  }
 
   // 设置账号
   const setupAccount = (key: AccountKey) => {
@@ -237,8 +249,7 @@
       showLoginSuccessNotice()
 
       // 获取 redirect 参数，如果存在则跳转到指定页面，否则跳转到首页
-      const redirect = route.query.redirect as string
-      router.push(redirect || '/')
+      router.push(resolveRedirect(route.query.redirect))
     } catch (error) {
       // 处理 HttpError
       if (error instanceof HttpError) {
@@ -252,6 +263,15 @@
       loading.value = false
       resetDragVerify()
     }
+  }
+
+  // 解析登录后的跳转地址：只接受站内路径，且不能指回登录页，否则回到首页
+  const resolveRedirect = (redirect: unknown): string => {
+    if (typeof redirect !== 'string' || !redirect.startsWith('/') || redirect.startsWith('//')) {
+      return '/'
+    }
+    const redirectPath = redirect.split(/[?#]/)[0]
+    return redirectPath === RoutesAlias.Login ? '/' : redirect
   }
 
   // 重置拖拽验证

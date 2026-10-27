@@ -48,6 +48,37 @@
           />
         </ElSelect>
       </ElFormItem>
+      <ElFormItem label="部门" prop="deptId">
+        <ElTreeSelect
+          v-model="formData.deptId"
+          :data="deptTree"
+          :props="deptTreeProps"
+          node-key="deptId"
+          check-strictly
+          default-expand-all
+          clearable
+          :render-after-expand="false"
+          placeholder="请选择部门"
+        />
+      </ElFormItem>
+      <ElFormItem label="岗位" prop="postIds">
+        <ElSelect
+          v-model="formData.postIds"
+          multiple
+          clearable
+          :placeholder="
+            formData.deptId ? '请选择岗位' : '请选择岗位（选择部门后可选该部门的专属岗位）'
+          "
+        >
+          <ElOption
+            v-for="post in availablePosts"
+            :key="post.postId"
+            :value="post.postId"
+            :label="post.postName"
+            :disabled="!post.enabled && !initialPostIds.includes(post.postId)"
+          />
+        </ElSelect>
+      </ElFormItem>
     </ElForm>
     <template #footer>
       <div class="dialog-footer">
@@ -59,7 +90,13 @@
 </template>
 
 <script setup lang="ts">
-  import { fetchCreateUser, fetchGetRoleOptions, fetchUpdateUser } from '@/api/system-manage'
+  import {
+    fetchCreateUser,
+    fetchGetDeptOptions,
+    fetchGetPostOptions,
+    fetchGetRoleOptions,
+    fetchUpdateUser
+  } from '@/api/system-manage'
   import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 
   interface Props {
@@ -78,7 +115,20 @@
 
   // 角色列表数据（启用的角色）
   const roleList = ref<Api.SystemManage.RoleListItem[]>([])
+  // 部门树、岗位列表（含停用项：停用项不可新选，但用户已有的仍可保留）
+  const deptTree = ref<Api.SystemManage.DeptItem[]>([])
+  const postList = ref<Api.SystemManage.PostListItem[]>([])
+  // 打开弹窗时用户已有的部门和岗位
+  const initialDeptId = ref<number>()
+  const initialPostIds = ref<number[]>([])
   const submitting = ref(false)
+
+  const deptTreeProps = {
+    label: 'deptName',
+    children: 'children',
+    disabled: (dept: Api.SystemManage.DeptItem) =>
+      !dept.enabled && dept.deptId !== initialDeptId.value
+  }
 
   // 对话框显示控制
   const dialogVisible = computed({
@@ -99,8 +149,56 @@
     userEmail: '',
     userGender: '1',
     status: '1',
-    userRoles: []
+    userRoles: [],
+    deptId: undefined,
+    postIds: []
   })
+
+  // 部门 ID → 上级部门 ID
+  const deptParents = computed(() => {
+    const parents = new Map<number, number>()
+    const walk = (depts: Api.SystemManage.DeptItem[]) =>
+      depts.forEach((dept) => {
+        parents.set(dept.deptId, dept.parentId)
+        walk(dept.children ?? [])
+      })
+    walk(deptTree.value)
+    return parents
+  })
+
+  // 所选部门及其全部上级部门：岗位适用于某部门时，也适用于其下级部门
+  const deptAndAncestors = computed(() => {
+    const ids = new Set<number>()
+    let current = formData.deptId || undefined
+    while (current && !ids.has(current)) {
+      ids.add(current)
+      current = deptParents.value.get(current)
+    }
+    return ids
+  })
+
+  // 与后端规则一致：部门不变时，用户已有的岗位即使不再适用也可保留
+  const keepsInitialDept = computed(() => (formData.deptId || undefined) === initialDeptId.value)
+
+  const isPostAvailable = (post: Api.SystemManage.PostListItem) =>
+    !post.deptIds?.length ||
+    post.deptIds.some((id) => deptAndAncestors.value.has(id)) ||
+    (keepsInitialDept.value && initialPostIds.value.includes(post.postId))
+
+  // 岗位下拉只显示适用于所选部门的岗位（未设置适用部门的岗位对所有部门可用）
+  const availablePosts = computed(() => postList.value.filter(isPostAvailable))
+
+  // 切换部门后，移除不再适用的已选岗位（岗位列表未加载时不处理）
+  watch(
+    () => formData.deptId,
+    () => {
+      const postsById = new Map(postList.value.map((post) => [post.postId, post]))
+      formData.postIds = formData.postIds.filter((id) => {
+        const post = postsById.get(id)
+        return !post || isPostAvailable(post)
+      })
+    }
+  )
 
   // 表单验证规则（密码仅新增时必填）
   const rules = computed<FormRules>(() => ({
@@ -122,10 +220,17 @@
   }))
 
   /**
-   * 加载可选角色
+   * 加载可选角色、部门和岗位
    */
-  const loadRoleOptions = async () => {
-    roleList.value = await fetchGetRoleOptions()
+  const loadOptions = async () => {
+    const [roles, depts, posts] = await Promise.all([
+      fetchGetRoleOptions(),
+      fetchGetDeptOptions(),
+      fetchGetPostOptions()
+    ])
+    roleList.value = roles
+    deptTree.value = depts
+    postList.value = posts
   }
 
   /**
@@ -142,8 +247,12 @@
       userEmail: row?.userEmail ?? '',
       userGender: row?.userGender ?? '1',
       status: row?.status ?? '1',
-      userRoles: Array.isArray(row?.userRoles) ? [...row.userRoles] : []
+      userRoles: Array.isArray(row?.userRoles) ? [...row.userRoles] : [],
+      deptId: row?.deptId ?? undefined,
+      postIds: Array.isArray(row?.postIds) ? [...row.postIds] : []
     })
+    initialDeptId.value = formData.deptId
+    initialPostIds.value = [...formData.postIds]
   }
 
   /**
@@ -155,7 +264,7 @@
     ([visible]) => {
       if (visible) {
         initFormData()
-        loadRoleOptions()
+        loadOptions()
         nextTick(() => {
           formRef.value?.clearValidate()
         })
@@ -180,7 +289,12 @@
 
     submitting.value = true
     try {
-      const payload = { ...formData, userEmail: formData.userEmail || undefined }
+      // 清空部门时 ElTreeSelect 可能给出空字符串，统一转为不传（表示不分配部门）
+      const payload = {
+        ...formData,
+        userEmail: formData.userEmail || undefined,
+        deptId: formData.deptId || undefined
+      }
       if (dialogType.value === 'add') {
         await fetchCreateUser(payload)
       } else {
