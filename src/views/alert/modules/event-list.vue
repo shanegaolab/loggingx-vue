@@ -161,7 +161,6 @@
   import { ALERT_CENTER, formatDuration } from '../shared'
   import NotifyRecords from './notify-records.vue'
 
-  const emit = defineEmits<{ firing: [count: number] }>()
   const ctx = inject(ALERT_CENTER)!
   const router = useRouter()
 
@@ -238,17 +237,14 @@
         days: days.value,
         limit: 500
       }
-      const [hostEvents, logEvents, hostFiring, logFiring] = await Promise.all([
+      const [hostEvents, logEvents] = await Promise.all([
         type.value === 'log' ? [] : fetchAlerts(query),
-        type.value === 'host' ? [] : fetchLogAlerts(query),
-        fetchAlerts({ status: 'firing', limit: 500 }),
-        fetchLogAlerts({ status: 'firing', limit: 500 })
+        type.value === 'host' ? [] : fetchLogAlerts(query)
       ])
       rows.value = [...hostEvents.map(fromHost), ...logEvents.map(fromLog)].sort(
         (a, b) =>
           Number(b.status === 'firing') - Number(a.status === 'firing') || b.startedAt - a.startedAt
       )
-      emit('firing', hostFiring.length + logFiring.length)
     } finally {
       loading.value = false
     }

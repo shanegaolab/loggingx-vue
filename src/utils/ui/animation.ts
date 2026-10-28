@@ -25,7 +25,7 @@
  * - 自动计算最大扩散半径
  *
  * @module utils/theme/animation
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 import { useCommon } from '@/hooks/core/useCommon'
 import { useTheme } from '@/hooks/core/useTheme'

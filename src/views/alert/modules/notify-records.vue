@@ -6,6 +6,7 @@
         <ElRadioButton value="">全部</ElRadioButton>
         <ElRadioButton value="log">日志告警</ElRadioButton>
         <ElRadioButton value="host">监控告警</ElRadioButton>
+        <ElRadioButton value="ai">AI 诊断</ElRadioButton>
         <ElRadioButton value="test">测试</ElRadioButton>
       </ElRadioGroup>
       <ElRadioGroup v-model="result" size="small">
@@ -65,11 +66,12 @@
 
   const props = defineProps<{ eventType?: 'host' | 'log'; eventId?: number }>()
 
-  const TYPE_NAMES = { host: '监控告警', log: '日志告警', test: '测试发送' }
-  const KIND_TAGS: Record<Kind, 'danger' | 'success' | 'warning' | 'info'> = {
+  const TYPE_NAMES = { host: '监控告警', log: '日志告警', ai: 'AI 诊断', test: '测试发送' }
+  const KIND_TAGS: Record<Kind, 'danger' | 'success' | 'warning' | 'info' | 'primary'> = {
     firing: 'danger',
     resolved: 'success',
     repeat: 'warning',
+    diagnosis: 'primary',
     test: 'info'
   }
 

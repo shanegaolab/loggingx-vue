@@ -3,33 +3,24 @@
  * 集中管理便于维护和更新链接地址
  *
  * @module utils/constants/links
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 export const WEB_LINKS = {
+  // 官网
+  HOME: 'https://loggingx.com',
+
   // Github 主页
-  GITHUB_HOME: 'https://github.com/Daymychen/art-design-pro',
+  GITHUB_HOME: 'https://github.com/shanegaolab/loggingx',
 
   // 项目 Github 主页
-  GITHUB: 'https://github.com/Daymychen/art-design-pro',
-
-  // 个人博客
-  BLOG: 'https://www.artd.pro',
+  GITHUB: 'https://github.com/shanegaolab/loggingx',
 
   // 项目文档
-  DOCS: 'https://www.artd.pro/docs/zh/',
+  DOCS: 'https://loggingx.com',
 
-  // 精简版本
-  LiteVersion: 'https://www.artd.pro/docs/zh/guide/lite-version.html',
-
-  // v2.6.1版本
-  OldVersion: 'https://www.artd.pro/v2/',
-
-  // 项目社区
-  COMMUNITY: 'https://www.artd.pro/docs/zh/community/communicate.html',
-
-  // 个人 Bilibili 主页
-  BILIBILI: 'https://space.bilibili.com/425500936?spm_id_from=333.1007.0.0',
+  // 问题反馈与交流
+  COMMUNITY: 'https://github.com/shanegaolab/loggingx/issues',
 
   // 项目介绍
-  INTRODUCE: 'https://www.artd.pro/docs/zh/guide/introduce.html'
+  INTRODUCE: 'https://loggingx.com'
 }

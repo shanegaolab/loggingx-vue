@@ -28,7 +28,7 @@
  * ```
  *
  * @module useTheme
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import { useSettingStore } from '@/store/modules/setting'

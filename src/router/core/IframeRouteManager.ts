@@ -4,7 +4,7 @@
  * 负责管理 iframe 类型的路由
  *
  * @module router/core/IframeRouteManager
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import type { AppRouteRecord } from '@/types/router'

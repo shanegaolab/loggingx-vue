@@ -18,7 +18,7 @@
  * - en: English
  *
  * @module locales
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import { createI18n } from 'vue-i18n'

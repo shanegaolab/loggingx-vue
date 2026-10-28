@@ -48,6 +48,9 @@
       :role-data="currentRoleData"
       @success="refreshData"
     />
+
+    <!-- 日志库权限弹窗 -->
+    <RoleStoreDialog v-model="storeDialog" :role-data="currentRoleData" />
   </div>
 </template>
 
@@ -59,6 +62,7 @@
   import RoleSearch from './modules/role-search.vue'
   import RoleEditDialog from './modules/role-edit-dialog.vue'
   import RolePermissionDialog from './modules/role-permission-dialog.vue'
+  import RoleStoreDialog from './modules/role-store-dialog.vue'
   import { ElTag, ElMessageBox } from 'element-plus'
 
   defineOptions({ name: 'Role' })
@@ -81,6 +85,7 @@
 
   const dialogVisible = ref(false)
   const permissionDialog = ref(false)
+  const storeDialog = ref(false)
   const currentRoleData = ref<RoleListItem | undefined>(undefined)
 
   const {
@@ -163,6 +168,11 @@
                     icon: 'ri:user-3-line'
                   },
                   {
+                    key: 'stores',
+                    label: '日志库权限',
+                    icon: 'ri:database-2-line'
+                  },
+                  {
                     key: 'edit',
                     label: '编辑角色',
                     icon: 'ri:edit-2-line'
@@ -207,6 +217,10 @@
     switch (item.key) {
       case 'permission':
         showPermissionDialog(row)
+        break
+      case 'stores':
+        currentRoleData.value = row
+        storeDialog.value = true
         break
       case 'edit':
         showDialog('edit', row)

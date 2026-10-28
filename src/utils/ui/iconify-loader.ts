@@ -10,7 +10,7 @@
  * 3. 在组件中使用：<LogxSvgIcon icon="ri:home-line" />
  *
  * @module utils/ui/iconify-loader
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 // import { addCollection } from '@iconify/vue'

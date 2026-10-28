@@ -16,7 +16,7 @@
  * - 响应数据解析
  *
  * @module types/common/response
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 /** 基础 API 响应结构 */

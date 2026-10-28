@@ -29,7 +29,7 @@
  * - 登出时自动清理
  *
  * @module store/modules/user
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'

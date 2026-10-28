@@ -19,7 +19,7 @@
  * - 错误日志收集和上报
  *
  * @module utils/http/error
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 import { AxiosError } from 'axios'
 import { ApiStatus } from './status'

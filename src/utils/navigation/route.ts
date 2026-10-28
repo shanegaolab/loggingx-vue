@@ -19,7 +19,7 @@
  * - iframe 页面特殊处理
  *
  * @module utils/navigation/route
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import { AppRouteRecord } from '@/types'

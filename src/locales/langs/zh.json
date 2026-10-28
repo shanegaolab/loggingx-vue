@@ -269,10 +269,23 @@
       "host": "主机监控"
     },
     "alert": {
-      "title": "告警中心"
+      "title": "告警中心",
+      "events": "告警事件",
+      "rules": "告警规则",
+      "notify": "通知管理"
+    },
+    "ai": {
+      "title": "AI 运维",
+      "chat": "智能问答",
+      "diagnosis": "AI 诊断",
+      "errorGroup": "错误归类",
+      "knowledge": "知识库",
+      "settings": "AI 设置"
     },
     "backup": {
-      "title": "备份管理"
+      "title": "备份管理",
+      "policies": "归档策略",
+      "archives": "归档记录"
     },
     "system": {
       "title": "系统管理",

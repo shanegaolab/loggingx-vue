@@ -18,6 +18,9 @@ export interface SseOptions {
   onEvent: (event: string, data: string) => void
   /** 用于断开连接 */
   signal: AbortSignal
+  /** 默认 GET；POST 时 body 以 JSON 发送 */
+  method?: 'GET' | 'POST'
+  body?: unknown
 }
 
 /** 拼接接口基础路径，如 VITE_API_URL 为 / 时得到 /api/... */
@@ -30,15 +33,21 @@ function resolveUrl(path: string): string {
  * 打开 SSE 连接并持续读取，直到服务端关闭或 signal 中断
  * @returns 连接正常结束时 resolve；主动中断时 resolve；出错时 reject
  */
-export async function streamEvents(path: string, { onEvent, signal }: SseOptions): Promise<void> {
+export async function streamEvents(
+  path: string,
+  { onEvent, signal, method = 'GET', body }: SseOptions
+): Promise<void> {
   const userStore = useUserStore()
   let response: Response
   try {
     response = await fetch(resolveUrl(path), {
+      method,
       headers: {
         Accept: 'text/event-stream',
+        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
         ...(userStore.accessToken ? { Authorization: `Bearer ${userStore.accessToken}` } : {})
       },
+      body: body === undefined ? undefined : JSON.stringify(body),
       signal
     })
   } catch (error) {

@@ -1,5 +1,11 @@
-/** 告警中心各页签共用的数据与文案 */
-import type { InjectionKey, Ref } from 'vue'
+/** 告警中心各页面共用的数据与文案 */
+import { onMounted, provide, ref, type InjectionKey, type Ref } from 'vue'
+import {
+  fetchAlertStores,
+  fetchLogRules,
+  fetchNotifyGroups,
+  fetchNotifyUsers
+} from '@/api/alert-center'
 
 export const CHANNEL_NAMES: Record<Api.AlertCenter.Channel, string> = {
   email: '邮件',
@@ -10,6 +16,7 @@ export const KIND_NAMES: Record<Api.AlertCenter.NotifyRecord['kind'], string> = 
   firing: '告警',
   resolved: '恢复',
   repeat: '重复提醒',
+  diagnosis: 'AI 建议',
   test: '测试'
 }
 
@@ -24,6 +31,38 @@ export interface AlertCenterContext {
 }
 
 export const ALERT_CENTER: InjectionKey<AlertCenterContext> = Symbol('alert-center')
+
+/**
+ * 告警中心的页面加载自己用到的选项并注入给子组件；没加载的保持空列表
+ * （各页面权限不同，例如只有告警事件页的角色无权读取通知组）
+ */
+export function provideAlertCenter(load: {
+  stores?: boolean
+  users?: boolean
+  groups?: boolean
+  logRules?: boolean
+}): AlertCenterContext {
+  const ctx: AlertCenterContext = {
+    stores: ref([]),
+    users: ref([]),
+    groups: ref([]),
+    logRules: ref([]),
+    reloadGroups: async () => {
+      ctx.groups.value = await fetchNotifyGroups()
+    },
+    reloadLogRules: async () => {
+      ctx.logRules.value = await fetchLogRules()
+    }
+  }
+  provide(ALERT_CENTER, ctx)
+  onMounted(() => {
+    if (load.stores) fetchAlertStores().then((list) => (ctx.stores.value = list))
+    if (load.users) fetchNotifyUsers().then((list) => (ctx.users.value = list))
+    if (load.groups) ctx.reloadGroups()
+    if (load.logRules) ctx.reloadLogRules()
+  })
+  return ctx
+}
 
 export const emptyNotify = (): Api.AlertCenter.RuleNotify => ({
   channels: [],

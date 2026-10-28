@@ -198,6 +198,19 @@
                   </dd>
                   <dt>行序号</dt>
                   <dd class="mono">{{ row.seq ?? '-' }}</dd>
+                  <template v-if="canAnalyze && ['ERROR', 'FATAL'].includes(row.level)">
+                    <dt>AI 分析</dt>
+                    <dd>
+                      <ElButton
+                        link
+                        type="primary"
+                        size="small"
+                        :loading="analyzing === row.id"
+                        @click="analyzeRow(row)"
+                        >结合代码分析这条错误</ElButton
+                      >
+                    </dd>
+                  </template>
                 </dl>
               </div>
             </template>
@@ -270,6 +283,7 @@
   import LogxSvgIcon from '@/components/core/base/logx-svg-icon/index.vue'
   import LogLevelTag from '../components/log-level-tag.vue'
   import { fetchSearchLogs } from '@/api/log'
+  import { analyzeLog } from '@/api/ai-diagnosis'
   import { LOG_LEVELS, isAlertLevel, levelClass, useLogStoreSelection } from '../shared'
 
   defineOptions({ name: 'LogQuery' })
@@ -430,6 +444,31 @@
   const route = useRoute()
   const router = useRouter()
   const canMonitorHosts = computed(() => router.hasRoute('HostMonitor'))
+
+  // 有「AI 诊断」菜单时，错误日志可以提交给 AI 结合代码分析
+  const canAnalyze = computed(() => router.hasRoute('AiDiagnosis'))
+  const analyzing = ref<string>()
+  const analyzeRow = async (row: Api.Log.LogRecord) => {
+    if (!storeId.value) return
+    analyzing.value = row.id
+    try {
+      const item = await analyzeLog({
+        storeId: storeId.value,
+        message: row.message,
+        host: row.host,
+        source: row.source,
+        time: row.time
+      })
+      ElMessage({
+        type: 'success',
+        message: '已提交 AI 分析，完成后可在「AI 诊断」查看',
+        duration: 4000
+      })
+      router.push({ name: 'AiDiagnosis', query: { id: item.id } })
+    } finally {
+      analyzing.value = undefined
+    }
+  }
   const openHostMonitor = (host: string) =>
     router.push({ name: 'HostMonitor', query: { storeId: storeId.value, host } })
 

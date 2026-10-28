@@ -438,7 +438,7 @@
             ? '均为警告'
             : '一切正常',
         tone: data.alerts.critical ? 'red' : data.alerts.firing ? 'amber' : 'green',
-        to: link('HostAlert')
+        to: link('AlertEvent')
       })
     }
     if (data.backup) {
@@ -467,7 +467,7 @@
   /** 监控告警打开主机详情；日志告警打开告警中心 */
   const openAlert = (alert: Api.Dashboard.Alerts['items'][number]) =>
     alert.type === 'log' || alert.metric === 'log'
-      ? go({ name: 'HostAlert' })
+      ? go({ name: 'AlertEvent' })
       : go({ name: 'HostMonitor', query: { storeId: alert.storeId, host: alert.host } })
 
   const openTrendLogs = (from: number, to: number) => {

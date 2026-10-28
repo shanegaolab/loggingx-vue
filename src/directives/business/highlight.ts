@@ -38,7 +38,7 @@
  * - 智能监听：只在有新代码块时才触发处理
  *
  * @module directives/highlight
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import { App, Directive } from 'vue'

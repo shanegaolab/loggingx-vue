@@ -32,7 +32,7 @@
  * 6. 更新本地版本号
  *
  * @module utils/sys/upgrade
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 import { upgradeLogList } from '@/mock/upgrade/changeLog'
 import { ElNotification } from 'element-plus'

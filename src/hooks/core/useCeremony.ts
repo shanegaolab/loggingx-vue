@@ -37,7 +37,7 @@
  * ```
  *
  * @module useCeremony
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import { useTimeoutFn, useIntervalFn, useDateFormat } from '@vueuse/core'

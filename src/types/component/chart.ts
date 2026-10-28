@@ -25,7 +25,7 @@
  * - 图表事件处理
  *
  * @module types/component/chart
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 import type { EChartsOption } from '@/plugins/echarts'
 

@@ -27,7 +27,7 @@
  * - 银行卡：13-19位，通过 Luhn 算法验证
  *
  * @module utils/validation/formValidator
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 /**

@@ -29,7 +29,7 @@
  * ```
  *
  * @module types/api/api
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 declare namespace Api {
@@ -92,6 +92,12 @@ declare namespace Api {
 
   /** 系统管理类型 */
   namespace SystemManage {
+    /** 角色可访问的日志库；allStores 为 true 时包括以后新建的日志库 */
+    interface RoleStoreScope {
+      allStores: boolean
+      storeIds: number[]
+    }
+
     /** 用户列表 */
     type UserList = Api.Common.PaginatedResponse<UserListItem>
 
@@ -574,6 +580,176 @@ declare namespace Api {
     type AlertRuleForm = Omit<AlertRule, 'id' | 'storeName' | 'updateTime'>
   }
 
+  /** AI 诊断：结合代码库分析错误日志 */
+  namespace AiDiagnosis {
+    /** auto 新类型错误自动分析，alert 日志告警触发，manual 手动 */
+    type Trigger = 'auto' | 'alert' | 'manual'
+    type ReviewState = 'open' | 'resolved' | 'ignored'
+    type Status = 'pending' | 'running' | 'success' | 'failed'
+
+    interface Settings {
+      provider: string | null
+      model: string | null
+      /** 每天自动分析（新错误、告警）的上限，手动分析不计 */
+      dailyLimit: number
+      /** 已配置 API Key 的提供方 */
+      providers: string[]
+      usedToday: number
+      notification: AlertCenter.RuleNotify
+    }
+
+    interface StoreConfig {
+      storeId: number
+      storeCode: string
+      storeName: string
+      storeEnabled: boolean
+      repoUrl: string | null
+      repoBranch: string | null
+      repoUsername: string | null
+      tokenSaved: boolean
+      autoNew: boolean
+      onAlert: boolean
+      repoCommit: string | null
+      repoSyncTime: string | null
+      repoError: string | null
+    }
+
+    interface StoreForm {
+      repoUrl: string
+      repoBranch: string
+      repoUsername: string
+      /** 只写；留空沿用已保存的令牌 */
+      token: string
+      autoNew: boolean
+      onAlert: boolean
+    }
+
+    interface Group {
+      id: number
+      storeId: number
+      storeName: string | null
+      errorType: string | null
+      /** 出错位置：第一个业务代码栈帧，或日志首行 */
+      location: string | null
+      sample: string | null
+      host: string | null
+      occurrences: number
+      firstSeen: string
+      lastSeen: string
+      status: ReviewState
+      diagnosisId: number | null
+    }
+
+    interface Item {
+      id: number
+      storeId: number
+      storeName: string | null
+      groupId: number | null
+      triggerType: Trigger
+      status: Status
+      reviewState: ReviewState
+      errorType: string | null
+      summary: string | null
+      confidence: 'high' | 'medium' | 'low' | null
+      host: string | null
+      logTime: string | null
+      createdBy: string | null
+      createTime: string
+      finishTime: string | null
+      error: string | null
+    }
+
+    interface CodeRef {
+      path: string
+      startLine: number
+      /** 堆栈指向的行，0 为未知 */
+      focusLine: number
+      frame: string
+      text: string
+    }
+
+    interface Detail {
+      item: Item
+      alertEventId: number | null
+      logText: string
+      source: string | null
+      repoCommit: string | null
+      codeRefs: CodeRef[]
+      provider: string | null
+      model: string | null
+      rootCause: string | null
+      suggestion: string | null
+      diff: string | null
+      promptTokens: number | null
+      completionTokens: number | null
+    }
+  }
+
+  /** AI 运维问答（RAG）与知识库 */
+  namespace AiOps {
+    interface Knowledge {
+      id: number
+      title: string
+      excerpt: string
+      tags: string[]
+      /** 为 null 时适用于全部日志库 */
+      storeId: number | null
+      storeName: string | null
+      length: number
+      createdBy: string | null
+      updateTime: string | null
+    }
+
+    interface KnowledgeDetail {
+      item: Knowledge
+      content: string
+    }
+
+    interface KnowledgeForm {
+      title: string
+      content: string
+      tags: string
+      storeId: number | null
+    }
+
+    /** 回答引用的资料，ref 即回答中的 [n] */
+    interface Source {
+      ref: number
+      type: 'knowledge' | 'diagnosis' | 'group' | 'alert' | 'log' | 'stats' | 'code'
+      id: string | null
+      storeId: number | null
+      storeName: string | null
+      title: string
+      excerpt: string
+      time: string | null
+    }
+
+    interface Turn {
+      role: 'user' | 'assistant'
+      content: string
+    }
+  }
+
+  /** 顶栏通知 */
+  namespace Notice {
+    interface Item {
+      /** ai 为 AI 诊断，host 为监控告警，log 为日志告警 */
+      type: 'ai' | 'host' | 'log'
+      id: number
+      title: string
+      detail: string
+      level: 'critical' | 'warning' | 'info'
+      time: number
+      timeText: string
+      unread: boolean
+    }
+
+    interface List {
+      unread: number
+      items: Item[]
+    }
+  }
+
   /** 告警中心：日志告警与通知 */
   namespace AlertCenter {
     type Channel = 'email' | 'sms'
@@ -698,10 +874,10 @@ declare namespace Api {
 
     interface NotifyRecord {
       id: number
-      eventType: 'host' | 'log' | 'test'
+      eventType: 'host' | 'log' | 'ai' | 'test'
       eventId: number | null
       ruleName: string
-      kind: 'firing' | 'resolved' | 'repeat' | 'test'
+      kind: 'firing' | 'resolved' | 'repeat' | 'diagnosis' | 'test'
       channel: Channel
       recipient: string
       status: 'success' | 'failed'

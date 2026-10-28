@@ -39,7 +39,7 @@
  * - openLockScreen: 打开锁屏
  *
  * @module utils/sys/mittBus
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 import mitt, { type Emitter } from 'mitt'
 

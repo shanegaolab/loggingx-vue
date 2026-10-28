@@ -18,7 +18,7 @@
  * - 组件事件参数类型
  *
  * @module types/component/index
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 // 搜索组件类型

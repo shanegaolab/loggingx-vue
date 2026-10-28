@@ -29,7 +29,7 @@ const fastEnterConfig: FastEnterConfig = {
       link: WEB_LINKS.DOCS
     },
     {
-      name: '技术支持',
+      name: '问题反馈',
       description: '技术支持与问题反馈',
       icon: 'ri:user-location-line',
       iconColor: '#A1A1AA',
@@ -38,13 +38,13 @@ const fastEnterConfig: FastEnterConfig = {
       link: WEB_LINKS.COMMUNITY
     },
     {
-      name: '哔哩哔哩',
-      description: '技术分享与交流',
-      icon: 'ri:bilibili-line',
+      name: 'GitHub',
+      description: '源码、问题反馈与更新',
+      icon: 'ri:github-line',
       iconColor: '#E4E4E7',
       enabled: true,
       order: 4,
-      link: WEB_LINKS.BILIBILI
+      link: WEB_LINKS.GITHUB
     }
   ],
   // 快速链接

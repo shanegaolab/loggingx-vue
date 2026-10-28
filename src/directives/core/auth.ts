@@ -29,7 +29,7 @@
  * - 权限列表从当前路由的 meta.authList 中获取
  *
  * @module directives/auth
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import { router } from '@/router'

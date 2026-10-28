@@ -26,7 +26,7 @@
  * 4. 登出时调用移除函数清理路由
  *
  * @module store/modules/menu
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 import { defineStore } from 'pinia'
 import { ref } from 'vue'

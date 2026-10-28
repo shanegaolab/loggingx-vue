@@ -29,7 +29,7 @@
  * ```
  *
  * @module useTableColumns
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import { ref, computed, watch } from 'vue'

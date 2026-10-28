@@ -27,7 +27,7 @@
  * ```
  *
  * @module useAuth
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import { useRoute } from 'vue-router'

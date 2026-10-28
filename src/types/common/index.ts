@@ -24,7 +24,7 @@
  * - 减少重复类型定义
  *
  * @module types/common/index
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 // 导出响应类型

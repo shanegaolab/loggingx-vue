@@ -116,7 +116,11 @@
           class="notice-button relative"
           @click="visibleNotice"
         >
-          <div class="absolute top-2 right-2 size-1.5 !bg-danger rounded-full"></div>
+          <div
+            v-if="noticeUnread > 0"
+            class="absolute top-2 right-2 size-1.5 !bg-danger rounded-full"
+            :aria-label="`${noticeUnread} 条未读通知`"
+          ></div>
         </LogxIconButton>
 
         <!-- 聊天按钮 -->
@@ -169,6 +173,7 @@
 </template>
 
 <script setup lang="ts">
+  import { useNotices } from '@/hooks/core/useNotices'
   import { useI18n } from 'vue-i18n'
   import { useRouter } from 'vue-router'
   import { useFullscreen, useWindowSize } from '@vueuse/core'
@@ -220,6 +225,7 @@
   const { menuList } = storeToRefs(menuStore)
 
   const showNotice = ref(false)
+  const { unread: noticeUnread } = useNotices()
   const notice = ref(null)
 
   // 菜单类型判断

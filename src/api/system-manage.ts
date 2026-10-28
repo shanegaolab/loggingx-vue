@@ -89,6 +89,28 @@ export function fetchSaveRoleMenuIds(id: number, menuIds: number[]) {
   })
 }
 
+// 角色可访问的日志库
+export function fetchGetRoleLogStores(id: number) {
+  return request.get<Api.SystemManage.RoleStoreScope>({
+    url: `/api/role/${id}/log-stores`
+  })
+}
+
+// 保存角色可访问的日志库
+export function fetchSaveRoleLogStores(id: number, data: Api.SystemManage.RoleStoreScope) {
+  return request.put<Api.SystemManage.RoleStoreScope>({
+    url: `/api/role/${id}/log-stores`,
+    data
+  })
+}
+
+// 当前用户可分配的日志库（只能分配自己能访问的）
+export function fetchGetRoleStoreOptions() {
+  return request.get<{ id: number; code: string; name: string }[]>({
+    url: '/api/role/log-store-options'
+  })
+}
+
 // ---------------- 部门管理 ----------------
 
 // 获取部门树（按名称、状态筛选时保留匹配部门的上级部门）

@@ -35,7 +35,7 @@
  * - 刷新页面保持标签状态
  *
  * @module store/modules/worktab
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'

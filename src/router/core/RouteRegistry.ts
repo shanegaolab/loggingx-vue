@@ -4,7 +4,7 @@
  * 负责动态路由的注册、验证和管理
  *
  * @module router/core/RouteRegistry
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import type { Router, RouteRecordRaw } from 'vue-router'

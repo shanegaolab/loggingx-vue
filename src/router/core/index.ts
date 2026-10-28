@@ -2,7 +2,7 @@
  * 路由核心模块导出
  *
  * @module router/core
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 export { RouteRegistry } from './RouteRegistry'

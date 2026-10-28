@@ -20,7 +20,7 @@
  * - 类型提示和自动补全
  *
  * @module types/store/index
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import { MenuThemeEnum, SystemThemeEnum } from '@/enums/appEnum'

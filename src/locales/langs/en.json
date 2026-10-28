@@ -269,10 +269,23 @@
       "host": "Hosts"
     },
     "alert": {
-      "title": "Alerts"
+      "title": "Alerts",
+      "events": "Alert Events",
+      "rules": "Alert Rules",
+      "notify": "Notifications"
+    },
+    "ai": {
+      "title": "AI Ops",
+      "chat": "Ask AI",
+      "diagnosis": "AI Diagnosis",
+      "errorGroup": "Error Groups",
+      "knowledge": "Knowledge Base",
+      "settings": "AI Settings"
     },
     "backup": {
-      "title": "Log Backup"
+      "title": "Log Backup",
+      "policies": "Archive Policies",
+      "archives": "Archives"
     },
     "system": {
       "title": "System Settings",

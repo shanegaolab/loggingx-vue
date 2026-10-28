@@ -1,14 +1,27 @@
 import { AppRouteRecord } from '@/types/router'
 
-/** 备份管理：一级菜单，无子菜单 */
+/** 备份管理：归档策略、归档记录 */
 export const backupRoutes: AppRouteRecord = {
   path: '/backup',
-  name: 'LogBackup',
-  component: '/backup/index',
+  name: 'Backup',
+  component: '/index/index',
   meta: {
     title: 'menus.backup.title',
     icon: 'ri:archive-drawer-line',
-    keepAlive: true,
     roles: ['R_SUPER', 'R_ADMIN']
-  }
+  },
+  children: [
+    {
+      path: 'policies',
+      name: 'LogBackup',
+      component: '/backup/policies',
+      meta: { title: 'menus.backup.policies', keepAlive: true }
+    },
+    {
+      path: 'archives',
+      name: 'BackupArchive',
+      component: '/backup/archives',
+      meta: { title: 'menus.backup.archives', keepAlive: true }
+    }
+  ]
 }

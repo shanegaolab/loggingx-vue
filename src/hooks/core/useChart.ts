@@ -46,7 +46,7 @@
  * ```
  *
  * @module useChart
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import { echarts, type EChartsOption } from '@/plugins/echarts'

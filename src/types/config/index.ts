@@ -21,7 +21,7 @@
  * - 配置数据验证
  *
  * @module types/config/index
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import { MenuTypeEnum, SystemThemeEnum } from '@/enums/appEnum'

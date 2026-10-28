@@ -4,7 +4,7 @@
  * 负责菜单数据的获取、过滤和处理
  *
  * @module router/core/MenuProcessor
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import type { AppRouteRecord } from '@/types/router'

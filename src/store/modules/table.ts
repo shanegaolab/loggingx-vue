@@ -23,7 +23,7 @@
  * - 用户配置跨页面保持
  *
  * @module store/modules/table
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 import { defineStore } from 'pinia'
 import { ref } from 'vue'

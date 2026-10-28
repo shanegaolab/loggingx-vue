@@ -26,7 +26,7 @@
  * - 提供便捷的显示/隐藏方法
  *
  * @module utils/ui/loading
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 import { fourDotsSpinnerSvg } from '@/assets/svg/loading'
 

@@ -12,7 +12,7 @@
  * 4. 平滑滚动 - 支持平滑滚动动画效果
  *
  * @module useCommon
- * @author Logx Design Pro Team
+ * @author LoggingX Team
  */
 
 import { computed } from 'vue'
