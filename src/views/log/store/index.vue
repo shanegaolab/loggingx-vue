@@ -92,7 +92,7 @@
                   <ElDropdownItem command="guide">接入指引</ElDropdownItem>
                   <ElDropdownItem command="token">重置 Token</ElDropdownItem>
                   <ElDropdownItem command="delete" divided>
-                    <span class="text-[#dc2626]">删除</span>
+                    <span class="text-[var(--el-color-danger)]">删除</span>
                   </ElDropdownItem>
                 </ElDropdownMenu>
               </template>
@@ -623,7 +623,7 @@
   }
 
   .status--on .status__dot {
-    background: #16a34a;
+    background: var(--el-color-success);
     box-shadow: 0 0 0 3px rgb(22 163 74 / 15%);
   }
 
@@ -691,7 +691,7 @@
   }
 
   .store-card__backup-icon.is-on {
-    color: #16a34a;
+    color: var(--el-color-success);
   }
 
   .store-card__backup-text {
@@ -702,7 +702,7 @@
 
   .store-card__backup-warn {
     flex: none;
-    color: #f59e0b;
+    color: var(--el-color-warning);
   }
 
   .store-card__token {
@@ -762,7 +762,7 @@
   }
 
   .agent-dot.is-online {
-    background: #16a34a;
+    background: var(--el-color-success);
     box-shadow: 0 0 0 3px rgb(22 163 74 / 15%);
   }
 

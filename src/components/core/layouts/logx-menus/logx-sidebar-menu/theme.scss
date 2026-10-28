@@ -4,7 +4,7 @@
 $menu-height: 42px;
 $menu-icon-size: 20px;
 $menu-font-size: 14px;
-$hover-bg-color: var(--logx-gray-200);
+$hover-bg-color: var(--logx-hover-color);
 $popup-menu-height: 40px;
 $popup-menu-padding: 8px;
 $popup-menu-margin: 5px;
@@ -165,8 +165,8 @@ $popup-menu-radius: 6px;
   // ---------------------- Dark theme menu ----------------------
   .el-menu-dark {
     @include theme-menu-base;
-    @include menu-active(#fff, #27282d, #fff);
-    @include menu-hover(#0f1015);
+    @include menu-active(#fff, #3a3a3c, #fff);
+    @include menu-hover(#2c2c2e);
 
     .el-sub-menu__icon-arrow {
       color: var(--logx-gray-400);
@@ -225,14 +225,18 @@ $popup-menu-radius: 6px;
 // 菜单折叠 hover 弹窗样式（浅色主题）
 .el-menu--vertical,
 .el-menu--popup-container {
-  @include popup-menu-base(var(--logx-gray-200), var(--logx-gray-900), var(--logx-gray-200));
+  @include popup-menu-base(
+    var(--logx-gray-200),
+    var(--theme-color),
+    var(--el-color-primary-light-9)
+  );
 }
 
 // 暗黑模式菜单样式
 .dark {
   .el-menu--vertical,
   .el-menu--popup-container {
-    @include popup-menu-base(var(--logx-gray-200), var(--logx-gray-900), #292a2e);
+    @include popup-menu-base(var(--logx-gray-300), var(--theme-color), var(--el-color-primary-light-8));
   }
 
   .layout-sidebar {
@@ -252,7 +256,7 @@ $popup-menu-radius: 6px;
 
     // 右侧箭头颜色
     .el-sub-menu__icon-arrow {
-      color: #fff;
+      color: var(--logx-gray-600);
     }
   }
 }

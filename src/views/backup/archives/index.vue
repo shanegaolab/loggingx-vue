@@ -273,7 +273,7 @@
   .running {
     display: inline-flex;
     align-items: center;
-    color: #2563eb;
+    color: var(--el-color-primary);
   }
 
   .dot {

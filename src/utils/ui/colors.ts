@@ -231,6 +231,30 @@ export function getDarkColor(color: string, level: number): string {
   return rgbToHex(darkRgb[0], darkRgb[1], darkRgb[2])
 }
 
+/** 暗黑模式卡片底色，与 tailwind.css 中的 --default-box-color 一致 */
+const DARK_CARD_COLOR = '#1c1c1e'
+
+/**
+ * 预设主色在暗黑模式下对应的颜色：苹果系统色的深色版本更亮，在黑色背景上对比度足够；
+ * 石墨黑在暗黑模式下换成近白色
+ */
+const DARK_VARIANTS: Record<string, string> = {
+  '#0071e3': '#0a84ff',
+  '#5856d6': '#7d7aff',
+  '#af52de': '#bf5af2',
+  '#ff2d55': '#ff375f',
+  '#ff9500': '#ff9f0a',
+  '#34a853': '#30d158',
+  '#00a3bf': '#40c8e0',
+  '#1d1d1f': '#f5f5f7',
+  '#000000': '#f5f5f7'
+}
+
+/** 主色在暗黑模式下实际使用的颜色；非预设颜色原样使用 */
+export function darkVariantOf(color: string): string {
+  return DARK_VARIANTS[color.trim().toLowerCase()] ?? color
+}
+
 /**
  * 处理 Element Plus 主题颜色
  * @param theme 主题颜色
@@ -239,10 +263,11 @@ export function getDarkColor(color: string, level: number): string {
 export function handleElementThemeColor(theme: string, isDark: boolean = false): void {
   document.documentElement.style.setProperty('--el-color-primary', theme)
 
+  // 暗黑模式下与卡片底色混合（同 Element Plus 暗黑主题），选中、悬停等浅色背景不会比卡片更暗
   for (let i = 1; i <= 9; i++) {
     document.documentElement.style.setProperty(
       `--el-color-primary-light-${i}`,
-      getLightColor(theme, i / 10, isDark)
+      isDark ? colourBlend(theme, DARK_CARD_COLOR, i / 10) : getLightColor(theme, i / 10)
     )
   }
 
@@ -254,18 +279,28 @@ export function handleElementThemeColor(theme: string, isDark: boolean = false):
   }
 }
 
+/** 颜色是否偏浅（相对亮度高于 0.5），其上应使用深色文字 */
+export function isLightColor(color: string): boolean {
+  const [r, g, b] = hexToRgb(color).map((value) => {
+    const c = value / 255
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+  })
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b > 0.5
+}
+
 /**
  * 设置 Element Plus 主题颜色
  * @param color 主题颜色
  */
 export function setElementThemeColor(color: string): void {
   const settingStore = useSettingStore()
-  const effectiveColor =
-    settingStore.isDark && color.trim().toLowerCase() === '#000000' ? '#ffffff' : color
+  const effectiveColor = settingStore.isDark ? darkVariantOf(color) : color
   const mixColor = '#ffffff'
   const elStyle = document.documentElement.style
 
   elStyle.setProperty('--el-color-primary', effectiveColor)
+  // 主色上的文字颜色：浅色主色（如暗黑模式下的石墨色）用深色文字，否则白字看不见
+  elStyle.setProperty('--logx-on-primary', isLightColor(effectiveColor) ? '#1d1d1f' : '#ffffff')
   handleElementThemeColor(effectiveColor, settingStore.isDark)
 
   // 生成更淡一点的颜色

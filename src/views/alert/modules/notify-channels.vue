@@ -378,13 +378,13 @@
   }
 
   .channel__icon--email {
-    color: #2563eb;
-    background: color-mix(in srgb, #2563eb 12%, transparent);
+    color: var(--el-color-primary);
+    background: color-mix(in srgb, var(--el-color-primary) 12%, transparent);
   }
 
   .channel__icon--sms {
-    color: #16a34a;
-    background: color-mix(in srgb, #16a34a 12%, transparent);
+    color: var(--el-color-success);
+    background: color-mix(in srgb, var(--el-color-success) 12%, transparent);
   }
 
   .channel__title {

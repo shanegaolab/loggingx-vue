@@ -2,92 +2,94 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ==================== Light Mode Variables ==================== */
+/* 配色与官网宣传页一致：苹果蓝主色、#F5F5F7 页面底色上的白色卡片、克制的中性灰 */
 :root {
   /* Base Colors */
   --logx-color: #ffffff;
   --theme-color: var(--main-color);
 
-  /* Theme Colors - OKLCH Format */
-  --logx-primary: #000000;
-  --logx-secondary: #1f1f1f;
-  --logx-error: #262626;
-  --logx-info: #6b7280;
-  --logx-success: #111111;
-  --logx-warning: #737373;
-  --logx-danger: #000000;
+  /* Theme Colors */
+  --logx-primary: #0071e3;
+  --logx-secondary: #1d1d1f;
+  --logx-error: #dc2626;
+  --logx-info: #6e6e73;
+  --logx-success: #16a34a;
+  --logx-warning: #d97706;
+  --logx-danger: #dc2626;
 
   /* Gray Scale - Light Mode */
-  --logx-gray-100: #fafafa;
-  --logx-gray-200: #f4f4f5;
-  --logx-gray-300: #e4e4e7;
-  --logx-gray-400: #d4d4d8;
-  --logx-gray-500: #a1a1aa;
-  --logx-gray-600: #71717a;
-  --logx-gray-700: #52525b;
-  --logx-gray-800: #27272a;
-  --logx-gray-900: #18181b;
+  --logx-gray-100: #fafafc;
+  --logx-gray-200: #f2f2f5;
+  --logx-gray-300: #e5e5ea;
+  --logx-gray-400: #d1d1d6;
+  --logx-gray-500: #aeaeb2;
+  --logx-gray-600: #86868b;
+  --logx-gray-700: #636366;
+  --logx-gray-800: #3a3a3c;
+  --logx-gray-900: #1d1d1f;
 
   /* Border Colors */
-  --logx-card-border: rgba(0, 0, 0, 0.08);
+  --logx-card-border: rgba(0, 0, 0, 0.06);
 
-  --default-border: #e5e5e5;
-  --default-border-dashed: #d4d4d4;
+  --default-border: #e5e5ea;
+  --default-border-dashed: #d1d1d6;
 
   /* Background Colors */
-  --default-bg-color: #fafafa;
+  --default-bg-color: #f5f5f7;
   --default-box-color: #ffffff;
 
-  /* Hover Color */
-  --logx-hover-color: #f0f0f0;
+  /* Hover / Active Color：半透明，卡片和弹出层上都可见 */
+  --logx-hover-color: rgba(0, 0, 0, 0.045);
 
   /* Active Color */
-  --logx-active-color: #eeeeee;
+  --logx-active-color: rgba(0, 0, 0, 0.07);
 
   /* Element Component Active Color */
-  --logx-el-active-color: #eeeeee;
+  --logx-el-active-color: rgba(0, 0, 0, 0.07);
 }
 
 /* ==================== Dark Mode Variables ==================== */
+/* 纯黑页面底色，卡片 #1C1C1E、浮层 #2C2C2E 逐层提亮（与 macOS 深色模式一致） */
 .dark {
   /* Base Colors */
   --logx-color: #000000;
-  --logx-primary: #ffffff;
-  --logx-secondary: #e5e5e5;
-  --logx-error: #d4d4d4;
-  --logx-info: #a3a3a3;
-  --logx-success: #f5f5f5;
-  --logx-warning: #a3a3a3;
-  --logx-danger: #ffffff;
+  --logx-primary: #0a84ff;
+  --logx-secondary: #f5f5f7;
+  --logx-error: #ff453a;
+  --logx-info: #98989d;
+  --logx-success: #30d158;
+  --logx-warning: #ff9f0a;
+  --logx-danger: #ff453a;
 
   /* Gray Scale - Dark Mode */
-  --logx-gray-100: #09090b;
-  --logx-gray-200: #18181b;
-  --logx-gray-300: #27272a;
-  --logx-gray-400: #3f3f46;
-  --logx-gray-500: #71717a;
-  --logx-gray-600: #a1a1aa;
-  --logx-gray-700: #d4d4d8;
-  --logx-gray-800: #e4e4e7;
-  --logx-gray-900: #fafafa;
+  --logx-gray-100: #0b0b0c;
+  --logx-gray-200: #1c1c1e;
+  --logx-gray-300: #2c2c2e;
+  --logx-gray-400: #3a3a3c;
+  --logx-gray-500: #636366;
+  --logx-gray-600: #8e8e93;
+  --logx-gray-700: #aeaeb2;
+  --logx-gray-800: #d1d1d6;
+  --logx-gray-900: #f5f5f7;
 
   /* Border Colors */
   --logx-card-border: rgba(255, 255, 255, 0.08);
 
   --default-border: rgba(255, 255, 255, 0.1);
-  --default-border-dashed: #3f3f46;
+  --default-border-dashed: #3a3a3c;
 
   /* Background Colors */
-  --default-bg-color: #070707;
-  --default-box-color: #111111;
+  --default-bg-color: #000000;
+  --default-box-color: #1c1c1e;
 
-  /* Hover Color */
-  --logx-hover-color: #1f1f1f;
+  /* Hover / Active Color：半透明，卡片（#1C1C1E）和弹出层（#2C2C2E）上都可见 */
+  --logx-hover-color: rgba(255, 255, 255, 0.07);
 
   /* Active Color */
-  --logx-active-color: #242424;
+  --logx-active-color: rgba(255, 255, 255, 0.11);
 
   /* Element Component Active Color */
-  --logx-el-active-color: #2a2a2a;
+  --logx-el-active-color: rgba(255, 255, 255, 0.12);
 }
 
 /* ==================== Tailwind Theme Configuration ==================== */

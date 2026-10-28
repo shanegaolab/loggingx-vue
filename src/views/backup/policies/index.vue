@@ -376,17 +376,17 @@
   }
 
   .text-danger {
-    color: #dc2626;
+    color: var(--el-color-danger);
   }
 
   .text-warning {
-    color: #f59e0b;
+    color: var(--el-color-warning);
   }
 
   .running {
     display: inline-flex;
     align-items: center;
-    color: #2563eb;
+    color: var(--el-color-primary);
   }
 
   .dot {

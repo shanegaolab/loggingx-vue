@@ -264,6 +264,6 @@
   }
 
   .dark .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: #222 !important;
+    background-color: var(--logx-gray-400) !important;
   }
 </style>

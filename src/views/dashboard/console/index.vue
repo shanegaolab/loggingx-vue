@@ -585,7 +585,7 @@
   }
 
   .kpi {
-    --tone: #2563eb;
+    --tone: var(--el-color-primary);
 
     position: relative;
     padding: 14px 16px;
@@ -620,19 +620,19 @@
   }
 
   .kpi--blue {
-    --tone: #2563eb;
+    --tone: var(--el-color-primary);
   }
 
   .kpi--red {
-    --tone: #dc2626;
+    --tone: var(--el-color-danger);
   }
 
   .kpi--green {
-    --tone: #16a34a;
+    --tone: var(--el-color-success);
   }
 
   .kpi--amber {
-    --tone: #f59e0b;
+    --tone: var(--el-color-warning);
   }
 
   .kpi--violet {
@@ -697,12 +697,12 @@
   }
 
   .kpi__trend.is-good {
-    color: #16a34a;
+    color: var(--el-color-success);
     background: rgb(22 163 74 / 10%);
   }
 
   .kpi__trend.is-bad {
-    color: #dc2626;
+    color: var(--el-color-danger);
     background: rgb(220 38 38 / 10%);
   }
 
@@ -764,7 +764,7 @@
 
   .error-rate b.is-bad,
   .text-error {
-    color: #dc2626;
+    color: var(--el-color-danger);
   }
 
   .muted {
@@ -782,7 +782,7 @@
   }
 
   .empty--ok {
-    color: #16a34a;
+    color: var(--el-color-success);
   }
 
   /* 日志库排行 */
@@ -815,7 +815,7 @@
 
   .rank__no.is-top {
     color: #fff;
-    background: #2563eb;
+    background: var(--el-color-primary);
   }
 
   .rank__body {
@@ -861,7 +861,7 @@
 
   .rank__errors {
     height: 100%;
-    background: #dc2626;
+    background: var(--el-color-danger);
   }
 
   .rank__meta {
@@ -952,11 +952,11 @@
   }
 
   .alert-item--critical .alert-item__icon {
-    color: #dc2626;
+    color: var(--el-color-danger);
   }
 
   .alert-item--warning .alert-item__icon {
-    color: #d97706;
+    color: var(--el-color-warning);
   }
 
   .alert-item__title {
@@ -977,7 +977,7 @@
     align-items: center;
     padding: 8px 10px;
     font-size: 13px;
-    color: #16a34a;
+    color: var(--el-color-success);
     background: rgb(22 163 74 / 8%);
     border-radius: 8px;
   }
@@ -1023,7 +1023,7 @@
   }
 
   .host-row__dot.is-on {
-    background: #16a34a;
+    background: var(--el-color-success);
   }
 
   .host-row__metric {

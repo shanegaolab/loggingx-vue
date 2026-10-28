@@ -193,7 +193,7 @@
     height: 7px;
     margin-right: 5px;
     vertical-align: 1px;
-    background: #16a34a;
+    background: var(--el-color-success);
     border-radius: 50%;
     box-shadow: 0 0 0 3px rgb(22 163 74 / 15%);
   }

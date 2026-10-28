@@ -62,18 +62,18 @@ export const useChartOps = (): ChartThemeConfig => ({
   /** 字体大小 */
   fontSize: 13,
   /** 字体颜色 */
-  fontColor: '#999',
+  fontColor: '#8E8E93',
   /** 主题颜色 */
   themeColor: getCssVar('--el-color-primary-light-1'),
-  /** 颜色组 */
+  /** 颜色组：主色在前，其余为浅色、深色背景上都清晰的苹果系统色 */
   colors: [
     getCssVar('--el-color-primary-light-1'),
-    '#18181B',
-    '#3F3F46',
-    '#71717A',
-    '#A1A1AA',
-    '#D4D4D8',
-    '#E4E4E7'
+    '#30B0C7',
+    '#34C759',
+    '#FF9F0A',
+    '#AF52DE',
+    '#FF6482',
+    '#8E8E93'
   ]
 })
 

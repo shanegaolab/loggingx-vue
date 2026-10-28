@@ -337,7 +337,7 @@
 
   .filter--online .dot,
   .state--on .dot {
-    color: #16a34a;
+    color: var(--el-color-success);
     box-shadow: 0 0 0 3px rgb(22 163 74 / 15%);
   }
 
@@ -380,7 +380,7 @@
   }
 
   .state--on {
-    color: #16a34a;
+    color: var(--el-color-success);
   }
 
   .state--off {

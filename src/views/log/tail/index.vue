@@ -369,14 +369,14 @@
   }
 
   .is-live .status-dot {
-    background: #16a34a;
+    background: var(--el-color-success);
     box-shadow: 0 0 0 3px rgb(22 163 74 / 18%);
     animation: pulse 2s ease-in-out infinite;
   }
 
   .is-connecting .status-dot,
   .is-retrying .status-dot {
-    background: #d97706;
+    background: var(--el-color-warning);
   }
 
   @keyframes pulse {
@@ -499,7 +499,7 @@
     font-size: 12px;
     color: #fff;
     cursor: pointer;
-    background: #2563eb;
+    background: var(--el-color-primary);
     border: none;
     border-radius: 15px;
     box-shadow: 0 4px 12px rgb(0 0 0 / 30%);
@@ -507,7 +507,7 @@
   }
 
   .new-lines:hover {
-    background: #1d4ed8;
+    background: var(--el-color-primary-dark-2);
   }
 
   @media (width <= 768px) {

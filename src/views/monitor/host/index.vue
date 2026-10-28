@@ -431,11 +431,11 @@
   }
 
   .summary__value--ok {
-    color: #16a34a;
+    color: var(--el-color-success);
   }
 
   .summary__value--bad {
-    color: #dc2626;
+    color: var(--el-color-danger);
   }
 
   .summary__label {
@@ -511,7 +511,7 @@
   }
 
   .filter--alerting:not(:disabled) b {
-    color: #dc2626;
+    color: var(--el-color-danger);
   }
 
   .host-body {
@@ -532,11 +532,11 @@
   }
 
   .host-table :deep(.row-critical td:first-child) {
-    box-shadow: inset 3px 0 0 #dc2626;
+    box-shadow: inset 3px 0 0 var(--el-color-danger);
   }
 
   .host-table :deep(.row-warning td:first-child) {
-    box-shadow: inset 3px 0 0 #f59e0b;
+    box-shadow: inset 3px 0 0 var(--el-color-warning);
   }
 
   .host {
@@ -553,7 +553,7 @@
   }
 
   .host__state.is-online {
-    background: #16a34a;
+    background: var(--el-color-success);
     box-shadow: 0 0 0 3px rgb(22 163 74 / 15%);
   }
 
@@ -604,11 +604,11 @@
   }
 
   .rate__in {
-    color: #16a34a;
+    color: var(--el-color-success);
   }
 
   .rate__out {
-    color: #2563eb;
+    color: var(--el-color-primary);
   }
 
   :deep(.usage__row) {

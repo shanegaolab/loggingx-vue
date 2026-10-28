@@ -189,7 +189,7 @@ html.dark .el-card {
 
     &:focus:not(.is-disabled) {
       color: var(--logx-gray-900) !important;
-      background-color: var(--logx-gray-200) !important;
+      background-color: var(--logx-hover-color) !important;
     }
   }
 }
@@ -432,9 +432,9 @@ html.dark .el-card {
       border-radius: 6px !important;
 
       &.is-selected {
-        color: var(--logx-gray-900) !important;
-        font-weight: 400 !important;
-        background-color: var(--logx-el-active-color) !important;
+        color: var(--el-color-primary) !important;
+        font-weight: 500 !important;
+        background-color: var(--el-color-primary-light-9) !important;
         margin-bottom: 4px !important;
       }
 
@@ -461,7 +461,7 @@ html.dark .el-card {
         border-radius: 6px !important;
 
         &:hover {
-          background-color: var(--logx-gray-200) !important;
+          background-color: var(--logx-hover-color) !important;
         }
       }
     }
@@ -516,4 +516,63 @@ html.dark .el-card {
   .el-input-number__increase {
     height: calc((var(--el-component-size) / 2)) !important;
   }
+}
+
+// 主色上的文字：由 setElementThemeColor 按主色明暗设置 --logx-on-primary（浅色主色用深色文字）
+:root {
+  --logx-on-primary: #ffffff;
+}
+
+.el-button--primary:not(.is-plain, .is-text, .is-link) {
+  --el-button-text-color: var(--logx-on-primary);
+  --el-button-hover-text-color: var(--logx-on-primary);
+  --el-button-active-text-color: var(--logx-on-primary);
+}
+
+.el-checkbox,
+.el-checkbox-button {
+  --el-checkbox-checked-icon-color: var(--logx-on-primary);
+}
+
+.el-radio-button {
+  --el-radio-button-checked-text-color: var(--logx-on-primary);
+}
+
+// 分页：当前页文字随主色明暗切换（与主按钮一致）
+.el-pagination.is-background .el-pager li.is-active {
+  color: var(--logx-on-primary);
+}
+
+// 暗黑模式分页：当前页用主色半透明底 + 主色文字（实心色块在黑底上过于刺眼）；
+// 其余页码用半透明浅底（实心灰块过重），悬停提亮并显示主色文字
+html.dark .el-pagination.is-background {
+  .el-pager li.is-active {
+    font-weight: 600;
+    color: var(--el-color-primary);
+    background-color: color-mix(in srgb, var(--el-color-primary) 24%, transparent);
+  }
+
+  --el-pagination-button-bg-color: rgba(255, 255, 255, 0.07);
+  --el-pagination-button-disabled-bg-color: rgba(255, 255, 255, 0.03);
+  --el-pagination-button-disabled-color: var(--el-text-color-disabled);
+
+  .btn-prev:disabled,
+  .btn-next:disabled,
+  .el-pager li.is-disabled {
+    background-color: var(--el-pagination-button-disabled-bg-color);
+  }
+
+  .btn-prev:not(:disabled):hover,
+  .btn-next:not(:disabled):hover,
+  .el-pager li:not(.is-active, .is-disabled):hover {
+    background-color: rgba(255, 255, 255, 0.14);
+  }
+}
+
+// 表格的描边分页样式（logx-table 的 custom-pagination）在暗黑模式下同样用半透明主色
+html.dark .custom-pagination .el-pagination .el-pager li.is-active {
+  font-weight: 600 !important;
+  color: var(--el-color-primary) !important;
+  background-color: color-mix(in srgb, var(--el-color-primary) 24%, transparent) !important;
+  border-color: color-mix(in srgb, var(--el-color-primary) 45%, transparent) !important;
 }

@@ -570,7 +570,7 @@
 
   .text-firing {
     font-weight: 600;
-    color: #dc2626;
+    color: var(--el-color-danger);
   }
 
   .state {
@@ -590,7 +590,7 @@
   }
 
   .state--on {
-    color: #16a34a;
+    color: var(--el-color-success);
   }
 
   .state--off {

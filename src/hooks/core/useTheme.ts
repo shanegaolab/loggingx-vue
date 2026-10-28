@@ -1,29 +1,29 @@
 /**
- * useTheme - 绯荤粺涓婚绠＄悊
+ * useTheme - 系统主题管理
  *
- * 鎻愪緵瀹屾暣鐨勪富棰樺垏鎹㈠拰绠＄悊鍔熻兘锛屾敮鎸佷寒鑹层€佹殫鑹插拰鑷姩妯″紡銆?
- * 鑷姩澶勭悊涓婚鍒囨崲鏃剁殑杩囨浮鏁堟灉锛岀‘淇濆垏鎹㈡祦鐣呮棤闂儊銆?
+ * 提供完整的主题切换和管理功能，支持亮色、暗色和自动模式。
+ * 自动处理主题切换时的过渡效果，确保切换流畅无闪烁。
  *
- * ## 涓昏鍔熻兘
+ * ## 主要功能
  *
- * 1. 涓婚鍒囨崲 - 鏀寔浜壊銆佹殫鑹层€佽嚜鍔ㄤ笁绉嶄富棰樻ā寮?
- * 2. 鑷姩妯″紡 - 鏍规嵁绯荤粺鍋忓ソ鑷姩鍒囨崲涓婚
- * 3. 棰滆壊閫傞厤 - 鑷姩璋冩暣涓婚鑹茬殑鏄庢殫鍙樹綋锛? 涓眰绾э級
- * 4. 杩囨浮浼樺寲 - 鍒囨崲鏃朵复鏃剁鐢ㄨ繃娓℃晥鏋滐紝閬垮厤闂儊
- * 5. 鐘舵€佹寔涔呭寲 - 涓婚璁剧疆鑷姩淇濆瓨鍒?store
+ * 1. 主题切换 - 支持亮色、暗色、自动三种主题模式
+ * 2. 自动模式 - 根据系统偏好自动切换主题
+ * 3. 颜色适配 - 主题色在暗色模式下换成对应的提亮色，并生成明暗变体（9 个层级）
+ * 4. 过渡优化 - 切换时临时禁用过渡效果，避免闪烁
+ * 5. 状态持久化 - 主题设置自动保存到 store
  *
- * ## 浣跨敤绀轰緥
+ * ## 使用示例
  *
  * ```typescript
  * const { switchThemeStyles } = useTheme()
  *
- * // 鍒囨崲鍒版殫鑹蹭富棰?
+ * // 切换到暗色主题
  * switchThemeStyles(SystemThemeEnum.DARK)
  *
- * // 鍒囨崲鍒颁寒鑹蹭富棰?
+ * // 切换到亮色主题
  * switchThemeStyles(SystemThemeEnum.LIGHT)
  *
- * // 鍒囨崲鍒拌嚜鍔ㄦā寮忥紙璺熼殢绯荤粺锛?
+ * // 切换到自动模式（跟随系统）
  * switchThemeStyles(SystemThemeEnum.AUTO)
  * ```
  *
@@ -42,7 +42,7 @@ import { watch } from 'vue'
 export function useTheme() {
   const settingStore = useSettingStore()
 
-  // 绂佺敤杩囨浮鏁堟灉
+  // 禁用过渡效果
   const disableTransitions = () => {
     const style = document.createElement('style')
     style.setAttribute('id', 'disable-transitions')
@@ -50,7 +50,7 @@ export function useTheme() {
     document.head.appendChild(style)
   }
 
-  // 鍚敤杩囨浮鏁堟灉
+  // 启用过渡效果
   const enableTransitions = () => {
     const style = document.getElementById('disable-transitions')
     if (style) {
@@ -58,9 +58,9 @@ export function useTheme() {
     }
   }
 
-  // 璁剧疆绯荤粺涓婚
+  // 设置系统主题
   const setSystemTheme = (theme: SystemThemeEnum, themeMode?: SystemThemeEnum) => {
-    // 涓存椂绂佺敤杩囨浮鏁堟灉
+    // 临时禁用过渡效果
     disableTransitions()
 
     const el = document.getElementsByTagName('html')[0]
@@ -74,9 +74,7 @@ export function useTheme() {
       el.setAttribute('class', currentTheme.className)
     }
 
-    // 璁剧疆鎸夐挳棰滆壊鍔犳繁鎴栧彉娴?
-
-    // 鏇存柊store涓殑涓婚璁剧疆
+    // 更新 store 中的主题设置；主题色不在预设列表中（如旧版本的黑白主色）时换成默认主色
     settingStore.setGlopTheme(theme, themeMode)
     const availableThemeColors = AppConfig.systemMainColor as readonly string[]
     if (!availableThemeColors.includes(settingStore.systemThemeColor)) {
@@ -85,7 +83,7 @@ export function useTheme() {
 
     setElementThemeColor(settingStore.systemThemeColor)
 
-    // 浣跨敤 requestAnimationFrame 纭繚鍦ㄤ笅涓€甯ф仮澶嶈繃娓℃晥鏋?
+    // 使用 requestAnimationFrame 确保在下一帧恢复过渡效果
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         enableTransitions()
@@ -93,16 +91,16 @@ export function useTheme() {
     })
   }
 
-  // 浣跨敤 VueUse 鐨?usePreferredDark 妫€娴嬬郴缁熶富棰樺亸濂?
+  // 使用 VueUse 的 usePreferredDark 检测系统主题偏好
   const prefersDark = usePreferredDark()
 
-  // 鑷姩璁剧疆绯荤粺涓婚
+  // 自动设置系统主题
   const setSystemAutoTheme = () => {
     const theme = prefersDark.value ? SystemThemeEnum.DARK : SystemThemeEnum.LIGHT
     setSystemTheme(theme, SystemThemeEnum.AUTO)
   }
 
-  // 鍒囨崲涓婚
+  // 切换主题
   const switchThemeStyles = (theme: SystemThemeEnum) => {
     if (theme === SystemThemeEnum.AUTO) {
       setSystemAutoTheme()
@@ -120,33 +118,31 @@ export function useTheme() {
 }
 
 /**
- * 鍒濆鍖栦富棰樼郴缁?
+ * 初始化主题系统
  */
 export function initializeTheme() {
   const settingStore = useSettingStore()
   const prefersDark = usePreferredDark()
 
-  // 鏍规嵁绯荤粺鍋忓ソ搴旂敤涓婚
+  // 根据系统偏好应用主题
   const applyThemeByMode = () => {
     const el = document.getElementsByTagName('html')[0]
     let actualTheme = settingStore.systemThemeType
 
-    // 濡傛灉鏄?AUTO 妯″紡锛屾娴嬬郴缁熷亸濂?
+    // 如果是 AUTO 模式，检测系统偏好
     if (settingStore.systemThemeMode === SystemThemeEnum.AUTO) {
       actualTheme = prefersDark.value ? SystemThemeEnum.DARK : SystemThemeEnum.LIGHT
-      // 鏇存柊瀹為檯搴旂敤鐨勪富棰樼被鍨?
+      // 更新实际应用的主题类型
       settingStore.systemThemeType = actualTheme
     }
 
-    // 璁剧疆涓婚 class
+    // 设置主题 class
     const currentTheme = AppConfig.systemThemeStyles[actualTheme as keyof SystemThemeTypes]
     if (currentTheme) {
       el.setAttribute('class', currentTheme.className)
     }
 
-    // 璁剧疆涓婚棰滆壊
-
-    // 璁剧疆鍦嗚
+    // 设置主题颜色（不在预设列表中时换成默认主色）
     const availableThemeColors = AppConfig.systemMainColor as readonly string[]
     if (!availableThemeColors.includes(settingStore.systemThemeColor)) {
       settingStore.systemThemeColor = AppConfig.systemMainColor[0]
@@ -154,18 +150,19 @@ export function initializeTheme() {
 
     setElementThemeColor(settingStore.systemThemeColor)
 
+    // 设置圆角
     document.documentElement.style.setProperty('--custom-radius', `${settingStore.customRadius}rem`)
   }
 
-  // 搴旂敤涓婚
+  // 应用主题
   applyThemeByMode()
 
-  // 濡傛灉鏄?AUTO 妯″紡锛岀洃鍚郴缁熶富棰樺彉鍖栵紙浣跨敤 VueUse 鐨勫搷搴斿紡鐗规€э級
+  // 如果是 AUTO 模式，监听系统主题变化（使用 VueUse 的响应式特性）
   if (settingStore.systemThemeMode === SystemThemeEnum.AUTO) {
     watch(
       prefersDark,
       () => {
-        // 鍙湁鍦?AUTO 妯″紡涓嬫墠鍝嶅簲绯荤粺涓婚鍙樺寲
+        // 只有在 AUTO 模式下才响应系统主题变化
         if (settingStore.systemThemeMode === SystemThemeEnum.AUTO) {
           applyThemeByMode()
         }

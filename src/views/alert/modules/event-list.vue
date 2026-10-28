@@ -377,7 +377,7 @@
 
   .text-firing {
     font-weight: 600;
-    color: #dc2626;
+    color: var(--el-color-danger);
   }
 
   .sample {

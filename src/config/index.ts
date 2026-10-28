@@ -51,24 +51,24 @@ const appConfig: SystemConfig = {
       name: 'Light',
       theme: SystemThemeEnum.LIGHT,
       color: ['#fff', '#fff'],
-      leftLineColor: '#EDEEF0',
-      rightLineColor: '#EDEEF0',
+      leftLineColor: '#E5E5EA',
+      rightLineColor: '#E5E5EA',
       img: configImages.themeStyles.light
     },
     {
       name: 'Dark',
       theme: SystemThemeEnum.DARK,
-      color: ['#111111'],
-      leftLineColor: '#3F3F46',
-      rightLineColor: '#3F3F46',
+      color: ['#1C1C1E'],
+      leftLineColor: '#3A3A3C',
+      rightLineColor: '#3A3A3C',
       img: configImages.themeStyles.dark
     },
     {
       name: 'System',
       theme: SystemThemeEnum.AUTO,
-      color: ['#fff', '#111111'],
-      leftLineColor: '#EDEEF0',
-      rightLineColor: '#3F3F46',
+      color: ['#fff', '#1C1C1E'],
+      leftLineColor: '#E5E5EA',
+      rightLineColor: '#3A3A3C',
       img: configImages.themeStyles.system
     }
   ],
@@ -85,24 +85,24 @@ const appConfig: SystemConfig = {
       theme: MenuThemeEnum.DESIGN,
       background: '#FFFFFF',
       systemNameColor: 'var(--logx-gray-800)',
-      iconColor: '#52525B',
-      textColor: '#18181B',
+      iconColor: '#636366',
+      textColor: '#1D1D1F',
       img: configImages.menuStyles.design
     },
     {
       theme: MenuThemeEnum.DARK,
-      background: '#111111',
-      systemNameColor: '#FAFAFA',
-      iconColor: '#D4D4D8',
-      textColor: '#D4D4D8',
+      background: '#1C1C1E',
+      systemNameColor: '#F5F5F7',
+      iconColor: '#AEAEB2',
+      textColor: '#D1D1D6',
       img: configImages.menuStyles.dark
     },
     {
       theme: MenuThemeEnum.LIGHT,
       background: '#ffffff',
       systemNameColor: 'var(--logx-gray-800)',
-      iconColor: '#52525B',
-      textColor: '#18181B',
+      iconColor: '#636366',
+      textColor: '#1D1D1F',
       img: configImages.menuStyles.light
     }
   ],
@@ -111,21 +111,21 @@ const appConfig: SystemConfig = {
     {
       theme: MenuThemeEnum.DARK,
       background: 'var(--default-box-color)',
-      systemNameColor: '#FAFAFA',
-      iconColor: '#D4D4D8',
+      systemNameColor: '#F5F5F7',
+      iconColor: '#AEAEB2',
       textColor: 'rgba(#FFFFFF, 0.7)'
     }
   ],
-  // 系统主色
+  // 系统主色（苹果系统色，与官网一致；暗黑模式下自动换成对应的提亮色，见 utils/ui/colors.ts）
   systemMainColor: [
-    '#000000',
-    '#18181B',
-    '#27272A',
-    '#3F3F46',
-    '#71717A',
-    '#A1A1AA',
-    '#E4E4E7',
-    '#FFFFFF'
+    '#0071E3',
+    '#5856D6',
+    '#AF52DE',
+    '#FF2D55',
+    '#FF9500',
+    '#34A853',
+    '#00A3BF',
+    '#1D1D1F'
   ] as const,
   // 快速入口配置
   fastEnter: fastEnterConfig,
