@@ -1,602 +1,482 @@
-<!-- 登录、注册、忘记密码左侧背景 -->
+<!-- 登录、注册、忘记密码左侧展示区：纯黑底（两种主题一致），产品标语 + 实时日志窗口 + AI 诊断卡片 -->
 <template>
   <div class="login-left-view">
-    <div class="logo">
-      <LogxLogo class="icon" size="46" />
-      <h1 class="title">{{ AppConfig.systemInfo.name }}</h1>
-    </div>
+    <div class="glow glow--blue"></div>
+    <div class="glow glow--violet"></div>
+    <div class="grid"></div>
 
-    <div class="left-img">
-      <ThemeSvg :src="loginIcon" size="100%" />
-    </div>
+    <header class="brand">
+      <LogxLogo size="36" />
+      <span>{{ AppConfig.systemInfo.name }}</span>
+    </header>
 
-    <div class="text-wrap">
-      <h1> {{ $t('login.leftView.title') }} </h1>
-      <p> {{ $t('login.leftView.subTitle') }} </p>
-    </div>
+    <div v-if="!hideContent" class="hero">
+      <p class="eyebrow">{{ $t('login.leftView.eyebrow') }}</p>
+      <h1 class="headline">
+        {{ $t('login.leftView.title') }}<br />
+        <span>{{ $t('login.leftView.titleAccent') }}</span>
+      </h1>
+      <p class="lead">{{ $t('login.leftView.subTitle') }}</p>
 
-    <!-- 几何装饰元素 -->
-    <div class="geometric-decorations">
-      <!-- 基础几何形状 -->
-      <div class="geo-element circle-outline animate-fade-in-up" style="animation-delay: 0s"></div>
-      <div
-        class="geo-element square-rotated animate-fade-in-left"
-        style="animation-delay: 0s"
-      ></div>
-      <div class="geo-element circle-small animate-fade-in-up" style="animation-delay: 0.3s"></div>
+      <div class="stage">
+        <div class="window" aria-hidden="true">
+          <div class="window__bar">
+            <i></i><i></i><i></i>
+            <span>order-service — live tail</span>
+          </div>
+          <div class="histogram">
+            <b
+              v-for="(bar, index) in BARS"
+              :key="index"
+              :class="{ 'is-error': bar.error }"
+              :style="{ height: `${bar.height}%`, animationDelay: `${index * 30}ms` }"
+            ></b>
+          </div>
+          <div class="lines">
+            <div class="lines__track">
+              <div
+                v-for="(line, index) in [...LINES, ...LINES]"
+                :key="index"
+                class="line"
+                :class="`line--${line.level.toLowerCase()}`"
+              >
+                <time>{{ line.time }}</time>
+                <em>{{ line.level }}</em>
+                <span>{{ line.text }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <div
-        class="geo-element square-bottom-right animate-fade-in-right"
-        style="animation-delay: 0s"
-      ></div>
-
-      <!-- 背景泡泡 -->
-      <div class="geo-element bg-bubble animate-scale-in" style="animation-delay: 0.5"></div>
-
-      <!-- 太阳/月亮 -->
-      <div
-        class="geo-element circle-top-right animate-fade-in-down"
-        style="animation-delay: 0.5"
-        @click="themeAnimation"
-      ></div>
-
-      <!-- 装饰点 -->
-      <div class="geo-element dot dot-top-left animate-bounce-in" style="animation-delay: 0s"></div>
-      <div
-        class="geo-element dot dot-top-right animate-bounce-in"
-        style="animation-delay: 0s"
-      ></div>
-      <div
-        class="geo-element dot dot-center-right animate-bounce-in"
-        style="animation-delay: 0s"
-      ></div>
-
-      <!-- 叠加方块组 -->
-      <div class="squares-group">
-        <i
-          class="geo-element square square-blue animate-fade-in-left-rotated-blue"
-          style="animation-delay: 0.2s"
-        ></i>
-        <i
-          class="geo-element square square-pink animate-fade-in-left-rotated-pink"
-          style="animation-delay: 0.4s"
-        ></i>
-        <i
-          class="geo-element square square-purple animate-fade-in-left-no-rotation"
-          style="animation-delay: 0.6s"
-        ></i>
+        <div class="toast" aria-hidden="true">
+          <span class="toast__icon"><LogxSvgIcon icon="ri:sparkling-2-fill" /></span>
+          <div>
+            <b>{{ $t('login.leftView.aiTitle') }}</b>
+            <p>{{ $t('login.leftView.aiText') }}</p>
+          </div>
+        </div>
       </div>
     </div>
+
+    <ul v-if="!hideContent" class="points">
+      <li><LogxSvgIcon icon="ri:shield-check-line" />{{ $t('login.leftView.point1') }}</li>
+      <li><LogxSvgIcon icon="ri:terminal-box-line" />{{ $t('login.leftView.point2') }}</li>
+      <li><LogxSvgIcon icon="ri:robot-2-line" />{{ $t('login.leftView.point3') }}</li>
+    </ul>
   </div>
 </template>
 
 <script setup lang="ts">
   import AppConfig from '@/config'
-  import loginIcon from '@imgs/svg/login_icon.svg'
-  import { themeAnimation } from '@/utils/ui/animation'
+  import LogxSvgIcon from '@/components/core/base/logx-svg-icon/index.vue'
 
-  // 定义 props
   defineProps<{
     hideContent?: boolean // 是否隐藏内容，只显示 logo
   }>()
+
+  /** 柱状图：最近 24 个时间段的日志量，红色为出现错误的时段 */
+  const BARS = [
+    38, 46, 41, 55, 49, 62, 58, 44, 51, 67, 73, 88, 95, 71, 60, 52, 57, 49, 63, 70, 58, 54, 61, 66
+  ].map((height, index) => ({ height, error: index >= 11 && index <= 13 }))
+
+  const LINES = [
+    { time: '14:02:08', level: 'INFO', text: 'POST /api/orders 201 · 38ms' },
+    { time: '14:02:09', level: 'INFO', text: 'order-42817 paid via wechat' },
+    { time: '14:02:10', level: 'WARN', text: 'HikariPool-1 connection wait 1.2s' },
+    { time: '14:02:11', level: 'ERROR', text: 'PaymentClient NullPointerException' },
+    { time: '14:02:11', level: 'ERROR', text: 'OrderService submit failed, retrying' },
+    { time: '14:02:12', level: 'INFO', text: 'retry ok · order-42817 confirmed' },
+    { time: '14:02:13', level: 'INFO', text: 'GET /api/orders/42817 200 · 12ms' },
+    { time: '14:02:14', level: 'WARN', text: 'disk /data 82% on node-3' }
+  ]
 </script>
 
 <style lang="scss" scoped>
-  // 颜色变量定义
-  $primary-light-7: var(--el-color-primary-light-7);
-  $primary-light-8: var(--el-color-primary-light-8);
-  $primary-light-9: var(--el-color-primary-light-9);
-  $primary-base: var(--el-color-primary);
-  $main-bg: var(--default-box-color);
-
-  // 混合颜色函数
-  $bg-mix-light-9: color-mix(in srgb, $primary-light-9 100%, $main-bg);
-  $bg-mix-light-8: color-mix(in srgb, $primary-light-8 80%, $main-bg);
-  $bg-mix-light-7: color-mix(in srgb, $primary-light-7 80%, $main-bg);
+  $ease: cubic-bezier(0.28, 0.11, 0.32, 1);
+  $mono: ui-monospace, 'SF Mono', sfmono-regular, menlo, consolas, monospace;
 
   .login-left-view {
     position: relative;
     box-sizing: border-box;
-    width: 65vw;
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    width: 54vw;
+    max-width: 1040px;
     height: 100%;
-    padding: 15px;
+    padding: 36px clamp(40px, 5vw, 88px) 40px;
     overflow: hidden;
-    background-color: $bg-mix-light-9;
+    color: #f5f5f7;
+    background: #000;
+  }
 
-    .logo {
-      position: relative;
-      z-index: 100;
-      display: flex;
-      align-items: center;
+  // 背景：两团柔和的光晕 + 极淡的网格
+  .glow {
+    position: absolute;
+    filter: blur(90px);
+    border-radius: 50%;
+    opacity: 0.55;
+    animation: drift 18s ease-in-out infinite alternate;
 
-      .title {
-        margin-left: 10px;
-        font-size: 20px;
-        font-weight: 400;
+    &--blue {
+      top: -18%;
+      right: -12%;
+      width: 60%;
+      aspect-ratio: 1;
+      background: radial-gradient(circle, #0a84ff 0%, transparent 65%);
+    }
+
+    &--violet {
+      bottom: -25%;
+      left: -15%;
+      width: 55%;
+      aspect-ratio: 1;
+      background: radial-gradient(circle, #5e5ce6 0%, transparent 65%);
+      animation-delay: -9s;
+    }
+  }
+
+  .grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgb(255 255 255 / 4%) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 4%) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse at 60% 40%, #000 20%, transparent 75%);
+  }
+
+  .brand {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .hero {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 640px;
+    padding: 24px 0;
+  }
+
+  .eyebrow {
+    font-size: 15px;
+    font-weight: 600;
+    color: #f56300;
+    animation: rise 0.9s $ease both;
+  }
+
+  .headline {
+    margin-top: 14px;
+    font-size: clamp(40px, 3.9vw, 64px);
+    font-weight: 700;
+    line-height: 1.08;
+    color: #f5f5f7;
+    letter-spacing: -0.025em;
+    animation: rise 0.9s $ease 0.08s both;
+
+    span {
+      color: transparent;
+      background: linear-gradient(90deg, #64d2ff 0%, #0a84ff 40%, #bf5af2 100%);
+      background-clip: text;
+    }
+  }
+
+  .lead {
+    max-width: 520px;
+    margin-top: 18px;
+    font-size: 16px;
+    line-height: 1.65;
+    color: #a1a1a6;
+    animation: rise 0.9s $ease 0.16s both;
+  }
+
+  // 日志窗口 + AI 卡片
+  .stage {
+    position: relative;
+    margin-top: 40px;
+    animation: rise 1s $ease 0.24s both;
+  }
+
+  .window {
+    overflow: hidden;
+    background: rgb(28 28 30 / 82%);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    box-shadow:
+      0 0 0 1px rgb(255 255 255 / 8%),
+      0 30px 80px -20px rgb(0 0 0 / 80%);
+  }
+
+  .window__bar {
+    position: relative;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    height: 38px;
+    padding: 0 14px;
+    border-bottom: 1px solid rgb(255 255 255 / 6%);
+
+    i {
+      width: 11px;
+      height: 11px;
+      background: #ff5f57;
+      border-radius: 50%;
+
+      &:nth-child(2) {
+        background: #febc2e;
+      }
+
+      &:nth-child(3) {
+        background: #28c840;
       }
     }
 
-    .left-img {
+    span {
       position: absolute;
-      inset: 0 0 10.5%;
-      z-index: 10;
-      width: 40%;
-      margin: auto;
-      animation: slideInLeft 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-family: $mono;
+      font-size: 12px;
+      color: #8e8e93;
+      pointer-events: none;
     }
+  }
 
-    .text-wrap {
-      position: absolute;
-      bottom: 80px;
-      width: 100%;
-      text-align: center;
-      animation: slideInLeft 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  .histogram {
+    display: flex;
+    gap: 4px;
+    align-items: flex-end;
+    height: 64px;
+    padding: 12px 16px 0;
 
-      h1 {
-        font-size: 24px;
-        font-weight: 400;
-        color: var(--logx-gray-900) !important;
-      }
+    b {
+      flex: 1;
+      background: linear-gradient(180deg, #0a84ff, rgb(10 132 255 / 35%));
+      border-radius: 3px 3px 0 0;
+      transform-origin: bottom;
+      animation: grow 0.9s $ease both;
 
-      p {
-        margin-top: 10px;
-        font-size: 14px;
-        color: var(--logx-gray-600) !important;
-      }
-    }
-
-    .geometric-decorations {
-      .geo-element {
-        position: absolute;
-        opacity: 0;
-        animation-fill-mode: forwards;
-        animation-duration: 0.8s;
-        animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      }
-
-      // 动画 mixin
-      @mixin fadeAnimation($direction: '', $rotation: 0deg) {
-        from {
-          opacity: 0;
-
-          @if $direction == 'up' {
-            transform: translateY(30px) rotate($rotation);
-          } @else if $direction == 'down' {
-            transform: translateY(-30px) rotate($rotation);
-          } @else if $direction == 'left' {
-            transform: translateX(-30px) rotate($rotation);
-          } @else if $direction == 'right' {
-            transform: translateX(30px) rotate($rotation);
-          }
-        }
-
-        to {
-          opacity: 1;
-
-          @if $direction == 'up' or $direction == 'down' {
-            transform: translateY(0) rotate($rotation);
-          } @else {
-            transform: translateX(0) rotate($rotation);
-          }
-        }
-      }
-
-      // 动画定义
-      @keyframes fadeInUp {
-        @include fadeAnimation('up');
-      }
-
-      @keyframes fadeInDown {
-        @include fadeAnimation('down');
-      }
-
-      @keyframes fadeInLeft {
-        @include fadeAnimation('left');
-      }
-
-      @keyframes fadeInLeftRotated {
-        @include fadeAnimation('left', -25deg);
-      }
-
-      @keyframes fadeInRight {
-        @include fadeAnimation('right');
-      }
-
-      @keyframes fadeInRightRotated {
-        @include fadeAnimation('right', 45deg);
-      }
-
-      @keyframes fadeInLeftRotatedBlue {
-        @include fadeAnimation('left', -10deg);
-      }
-
-      @keyframes fadeInLeftRotatedPink {
-        @include fadeAnimation('left', 10deg);
-      }
-
-      @keyframes fadeInLeftNoRotation {
-        @include fadeAnimation('left');
-      }
-
-      @keyframes scaleIn {
-        from {
-          opacity: 0;
-          transform: scale(0.8);
-        }
-
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-
-      @keyframes bounceIn {
-        0% {
-          opacity: 0;
-          transform: scale(0.3);
-        }
-
-        50% {
-          opacity: 1;
-          transform: scale(1.05);
-        }
-
-        70% {
-          transform: scale(0.9);
-        }
-
-        100% {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-
-      @keyframes lineGrow {
-        from {
-          opacity: 0;
-        }
-
-        to {
-          opacity: 1;
-        }
-      }
-
-      @keyframes slideInLeft {
-        from {
-          opacity: 0;
-          transform: translateX(-30px);
-        }
-
-        to {
-          opacity: 1;
-          transform: translateX(0);
-        }
-      }
-
-      // 动画类
-      .animate-fade-in-up {
-        animation-name: fadeInUp;
-      }
-
-      .animate-fade-in-down {
-        animation-name: fadeInDown;
-      }
-
-      .animate-fade-in-left {
-        animation-name: fadeInLeft;
-      }
-
-      .animate-fade-in-right {
-        animation-name: fadeInRight;
-      }
-
-      .animate-scale-in {
-        animation-name: scaleIn;
-        animation-duration: 1.2s;
-      }
-
-      .animate-bounce-in {
-        animation-name: bounceIn;
-        animation-duration: 0.6s;
-      }
-
-      .animate-fade-in-left-rotated-blue {
-        animation-name: fadeInLeftRotatedBlue;
-      }
-
-      .animate-fade-in-left-rotated-pink {
-        animation-name: fadeInLeftRotatedPink;
-      }
-
-      .animate-fade-in-left-no-rotation {
-        animation-name: fadeInLeftNoRotation;
-      }
-
-      // 基础几何形状
-      .circle-outline {
-        top: 10%;
-        left: 25%;
-        width: 42px;
-        height: 42px;
-        border: 2px solid $primary-light-8;
-        border-radius: 50%;
-      }
-
-      .square-rotated {
-        top: 50%;
-        left: 16%;
-        width: 60px;
-        height: 60px;
-        background-color: $bg-mix-light-8;
-
-        &.animate-fade-in-left {
-          animation-name: fadeInLeftRotated;
-        }
-      }
-
-      .circle-small {
-        bottom: 26%;
-        left: 30%;
-        width: 18px;
-        height: 18px;
-        background-color: $primary-light-8;
-        border-radius: 50%;
-      }
-
-      // 太阳/月亮效果
-      .circle-top-right {
-        top: 3%;
-        right: 3%;
-        z-index: 100;
-        width: 50px;
-        height: 50px;
-        cursor: pointer;
-        background: $bg-mix-light-7;
-        border-radius: 50%;
-        transition: all 0.3s;
-
-        &::after {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 100%;
-          height: 100%;
-          content: '';
-          background: linear-gradient(to right, #fcbb04, #fffc00);
-          border-radius: 50%;
-          opacity: 0;
-          transition: all 0.5s;
-          transform: translate(-50%, -50%);
-        }
-
-        &:hover {
-          box-shadow: 0 0 36px #fffc00;
-
-          &::after {
-            opacity: 1;
-          }
-        }
-      }
-
-      .square-bottom-right {
-        right: 10%;
-        bottom: 10%;
-        width: 50px;
-        height: 50px;
-        background-color: $primary-light-8;
-
-        &.animate-fade-in-right {
-          animation-name: fadeInRightRotated;
-        }
-      }
-
-      // 背景泡泡
-      .bg-bubble {
-        top: -120px;
-        right: -120px;
-        width: 360px;
-        height: 360px;
-        background-color: $bg-mix-light-8;
-        border-radius: 50%;
-      }
-
-      // 装饰点
-      .dot {
-        width: 14px;
-        height: 14px;
-        background-color: $primary-light-7;
-        border-radius: 50%;
-
-        &.dot-top-left {
-          top: 140px;
-          left: 100px;
-        }
-
-        &.dot-top-right {
-          top: 140px;
-          right: 120px;
-        }
-
-        &.dot-center-right {
-          top: 46%;
-          right: 22%;
-          background-color: $primary-light-8;
-        }
-      }
-
-      // 叠加方块组
-      .squares-group {
-        position: absolute;
-        bottom: 18px;
-        left: 20px;
-        width: 140px;
-        height: 140px;
-        pointer-events: none;
-
-        .square {
-          position: absolute;
-          display: block;
-          border-radius: 8px;
-          box-shadow: 0 8px 24px rgb(64 87 167 / 12%);
-
-          &.square-blue {
-            top: 12px;
-            left: 30px;
-            z-index: 2;
-            width: 50px;
-            height: 50px;
-            background-color: rgb(from $primary-base r g b / 30%);
-          }
-
-          &.square-pink {
-            top: 30px;
-            left: 48px;
-            z-index: 1;
-            width: 70px;
-            height: 70px;
-            background-color: rgb(from $primary-base r g b / 15%);
-          }
-
-          &.square-purple {
-            top: 66px;
-            left: 86px;
-            z-index: 3;
-            width: 32px;
-            height: 32px;
-            background-color: rgb(from $primary-base r g b / 45%);
-          }
-        }
-
-        // 装饰线条
-        &::after {
-          position: absolute;
-          top: 86px;
-          left: 72px;
-          width: 80px;
-          height: 1px;
-          content: '';
-          background: linear-gradient(90deg, var(--el-color-primary-light-6), transparent);
-          opacity: 0;
-          transform: rotate(50deg);
-          animation: lineGrow 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-          animation-delay: 1.2s;
-        }
-      }
-    }
-
-    @media only screen and (width <= 1600px) {
-      width: 60vw;
-
-      .text-wrap {
-        bottom: 40px;
-      }
-    }
-
-    @media only screen and (width <= 1180px) {
-      width: auto;
-      height: auto;
-      padding: 0;
-      // 隐藏背景和其他内容，只保留 logo
-      background: transparent;
-
-      .left-img,
-      .text-wrap,
-      .geometric-decorations {
-        display: none;
-      }
-
-      .logo {
-        display: none;
+      &.is-error {
+        background: linear-gradient(180deg, #ff453a, rgb(255 69 58 / 40%));
       }
     }
   }
 
-  // 暗色主题
-  .dark .login-left-view {
-    background-color: color-mix(in srgb, $primary-light-9 60%, #070707);
+  .lines {
+    height: 176px;
+    padding: 6px 0;
+    overflow: hidden;
+    border-top: 1px solid rgb(255 255 255 / 6%);
+    mask-image: linear-gradient(180deg, transparent, #000 14%, #000 86%, transparent);
+  }
 
-    @media only screen and (width <= 1180px) {
-      background: transparent;
+  .lines__track {
+    animation: scroll 16s linear infinite;
+  }
+
+  .line {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    height: 30px;
+    padding: 0 16px;
+    font-family: $mono;
+    font-size: 12.5px;
+    white-space: nowrap;
+
+    time {
+      color: #636366;
     }
 
-    .geometric-decorations {
-      // 月亮效果
-      .circle-top-right {
-        background-color: $bg-mix-light-8;
-        box-shadow: 0 0 25px #333 inset;
-        transition: all 0.3s ease-in-out 0.1s;
-        rotate: -48deg;
-
-        &::before {
-          position: absolute;
-          top: 0;
-          left: 15px;
-          width: 50px;
-          height: 50px;
-          content: '';
-          background-color: $bg-mix-light-9;
-          border-radius: 50%;
-          transition: all 0.3s ease-in-out;
-        }
-
-        &:hover {
-          background-color: transparent;
-          box-shadow: 0 40px 25px #ddd inset;
-
-          &::before {
-            left: 18px;
-          }
-
-          &::after {
-            opacity: 0;
-          }
-        }
-      }
-
-      .bg-bubble {
-        background-color: $bg-mix-light-9;
-      }
-
-      // 其他元素颜色调整
-      .square-rotated {
-        background-color: $bg-mix-light-9;
-      }
-
-      .circle-small,
-      .dot {
-        background-color: $primary-light-8;
-      }
-
-      .square-bottom-right {
-        background-color: $primary-light-9;
-      }
-
-      .dot.dot-top-right {
-        background-color: $primary-light-8;
-      }
+    em {
+      width: 44px;
+      font-style: normal;
+      font-weight: 600;
     }
 
-    // 方块组暗色调整
-    .squares-group {
-      .square {
-        box-shadow: none;
+    span {
+      overflow: hidden;
+      color: #d1d1d6;
+      text-overflow: ellipsis;
+    }
 
-        &.square-blue {
-          background-color: rgb(from $primary-base r g b / 18%);
-        }
+    &--info em {
+      color: #64d2ff;
+    }
 
-        &.square-pink {
-          background-color: rgb(from $primary-base r g b / 10%);
-        }
+    &--warn em {
+      color: #ffd60a;
+    }
 
-        &.square-purple {
-          background-color: rgb(from $primary-base r g b / 20%);
-        }
+    &--error {
+      background: rgb(255 69 58 / 12%);
+
+      em {
+        color: #ff6961;
       }
+    }
+  }
 
-      &::after {
-        background: linear-gradient(90deg, $primary-light-8, transparent);
+  .toast {
+    position: absolute;
+    right: -24px;
+    bottom: -28px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    width: min(340px, 70%);
+    padding: 14px 16px;
+    color: #1d1d1f;
+    background: rgb(255 255 255 / 92%);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-radius: 16px;
+    box-shadow:
+      0 24px 60px -18px rgb(0 0 0 / 70%),
+      0 0 0 1px rgb(255 255 255 / 30%);
+    animation:
+      pop 0.8s $ease 1.1s both,
+      float 6s ease-in-out 2s infinite;
+
+    b {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    p {
+      margin-top: 3px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #424245;
+    }
+  }
+
+  .toast__icon {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    font-size: 17px;
+    color: #fff;
+    background: linear-gradient(135deg, #5e5ce6, #bf5af2);
+    border-radius: 10px;
+  }
+
+  .points {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 28px;
+    padding-top: 22px;
+    font-size: 14px;
+    color: #a1a1a6;
+    border-top: 1px solid rgb(255 255 255 / 10%);
+    animation: rise 0.9s $ease 0.4s both;
+
+    li {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+
+      :deep(.logx-svg-icon) {
+        font-size: 17px;
+        color: #30d158;
       }
+    }
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes grow {
+    from {
+      transform: scaleY(0.15);
+    }
+
+    to {
+      transform: scaleY(1);
+    }
+  }
+
+  @keyframes scroll {
+    from {
+      transform: translateY(0);
+    }
+
+    to {
+      transform: translateY(-50%);
+    }
+  }
+
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.96);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes float {
+    50% {
+      transform: translateY(-6px);
+    }
+  }
+
+  @keyframes drift {
+    to {
+      transform: translate(-6%, 8%) scale(1.08);
+    }
+  }
+
+  // 窗口较矮时收起日志窗口，只保留标语
+  @media (height <= 760px) {
+    .stage {
+      display: none;
+    }
+  }
+
+  @media (width <= 1180px) {
+    .login-left-view {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glow,
+    .lines__track,
+    .toast,
+    .histogram b,
+    .eyebrow,
+    .headline,
+    .lead,
+    .stage,
+    .points {
+      animation: none;
     }
   }
 </style>

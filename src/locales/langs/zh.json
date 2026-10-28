@@ -150,8 +150,15 @@
   },
   "login": {
     "leftView": {
-      "title": "一款兼具设计美学与高效开发的后台系统",
-      "subTitle": "美观实用的界面，经过视觉优化，确保卓越的用户体验"
+      "eyebrow": "私有部署的日志平台",
+      "title": "每一行日志，",
+      "titleAccent": "都有着落。",
+      "subTitle": "采集、存储、查询、告警与归档，一套系统完成；出了错，AI 会结合你的代码告诉你原因。",
+      "aiTitle": "AI 诊断",
+      "aiText": "PaymentClient 第 42 行未判空，建议先校验 channel 再发起支付。",
+      "point1": "断网、重启，日志一行不丢",
+      "point2": "一条命令接入 Agent",
+      "point3": "AI 结合代码给出修复建议"
     },
     "title": "欢迎回来",
     "subTitle": "输入您的账号和密码登录",

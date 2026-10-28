@@ -16,7 +16,7 @@
             :rules="rules"
             :key="formKey"
             @keyup.enter="handleSubmit"
-            style="margin-top: 25px"
+            style="margin-top: 32px"
           >
             <ElFormItem prop="account">
               <ElSelect v-model="formData.account" @change="setupAccount">
@@ -51,7 +51,7 @@
             <!-- 推拽验证 -->
             <div class="relative pb-5 mt-6">
               <div
-                class="relative z-[2] overflow-hidden select-none rounded-lg border border-transparent tad-300"
+                class="relative z-[2] overflow-hidden select-none rounded-xl border border-transparent tad-300"
                 :class="{ '!border-[#FF4E4F]': !isPassing && isClickPass }"
               >
                 <LogxDragVerify
@@ -61,7 +61,9 @@
                   textColor="var(--logx-gray-700)"
                   :successText="$t('login.sliderSuccessText')"
                   progressBarBg="var(--main-color)"
-                  :background="isDark ? '#26272F' : '#F1F1F4'"
+                  :background="isDark ? '#2C2C2E' : '#F2F2F5'"
+                  :height="44"
+                  radius="12px"
                   handlerBg="var(--default-box-color)"
                 />
               </div>
@@ -82,7 +84,7 @@
               }}</RouterLink>
             </div>
 
-            <div style="margin-top: 30px">
+            <div style="margin-top: 28px">
               <ElButton
                 class="w-full custom-height"
                 type="primary"
@@ -94,7 +96,7 @@
               </ElButton>
             </div>
 
-            <div class="mt-5 text-sm text-gray-600">
+            <div class="mt-6 text-sm text-g-600 text-center">
               <span>{{ $t('login.noAccount') }}</span>
               <RouterLink class="text-theme" :to="{ name: 'Register' }">{{
                 $t('login.register')
@@ -103,6 +105,8 @@
           </ElForm>
         </div>
       </div>
+
+      <p class="auth-footer">© {{ year }} {{ systemName }} · loggingx.com</p>
     </div>
   </div>
 </template>
@@ -172,6 +176,7 @@
   const isClickPass = ref(false)
 
   const systemName = AppConfig.systemInfo.name
+  const year = new Date().getFullYear()
   const formRef = ref<FormInstance>()
 
   const formData = reactive({
@@ -299,6 +304,6 @@
 
 <style lang="scss" scoped>
   :deep(.el-select__wrapper) {
-    height: 40px !important;
+    height: 44px !important;
   }
 </style>

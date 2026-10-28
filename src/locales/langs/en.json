@@ -150,8 +150,15 @@
   },
   "login": {
     "leftView": {
-      "title": "A backend system of beauty and efficiency",
-      "subTitle": "A sleek and practical interface for a great user experience"
+      "eyebrow": "Self-hosted log platform",
+      "title": "Every log line,",
+      "titleAccent": "accounted for.",
+      "subTitle": "Collect, store, search, alert and archive in one system — and when something breaks, AI reads your code and tells you why.",
+      "aiTitle": "AI diagnosis",
+      "aiText": "PaymentClient line 42 lacks a null check — validate the channel before charging.",
+      "point1": "No lost lines across outages and restarts",
+      "point2": "One command to install the agent",
+      "point3": "AI fix suggestions from your code"
     },
     "title": "Welcome back",
     "subTitle": "Please enter your account and password to login",
