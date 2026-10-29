@@ -564,6 +564,9 @@ a { color: var(--link); }
   .cap:hover, .btn:active { transform: none; }
 }
 
+/* 归档列表：状态、大小不被长文件名挤压换行，文件名用省略号截断 */
+.archive .ok, .archive .back, .archive .size { flex: none; white-space: nowrap; }
+
 /* 手机适配：导航单行可横滑、触控区域不小于 40px、首屏数字 2×2 */
 @media (max-width: 640px) {
   .nav { padding-bottom: 0; }
@@ -577,6 +580,9 @@ a { color: var(--link); }
   .hero .proof div:nth-child(even) { padding-left: 18px; border-left: 1px solid var(--line); }
   .proof strong { font-size: 34px; }
   .footer a { display: inline-block; padding: 10px 0; }
+  .repo { padding-block: 10px; }
+  /* 点导航跳转时，区块小标题不被两行高的顶栏挡住 */
+  section[id] { scroll-margin-top: 40px; }
 }
 @media (max-width: 640px) and (prefers-reduced-motion: no-preference) {
   .reveal { transform: translateY(20px); }
@@ -1081,18 +1087,29 @@ Caused by: java.net.SocketTimeoutException: Read timed out</pre>
     window.addEventListener("scroll", update, { passive: true });
   })();
 
-  // 滚动进入：内容一直可见，进入视口时从下方轻移到位
+  // 滚动进入：内容一直可见，进入视口时从下方轻移到位。
+  // 区块从屏幕下方离开视口（往回滚到上面）时复位，再次滚下来时重新播放；在上方离开的保持原位
   (function () {
     if (!("IntersectionObserver" in window) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     var items = document.querySelectorAll(".section-head, .rel-head, .proof, .caps, .feature, .flow, .ai-grid, .ai-points, .panel, .ledger, .chain, .cases, .launch, .secure, .stack, .open, .faq, .contact .wrap > *");
     var observer = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-in");
-          observer.unobserve(entry.target);
-        }
+        if (entry.isIntersecting) entry.target.classList.add("is-in");
       });
     }, { rootMargin: "0px 0px -8% 0px" });
+    // 复位放在滚动监听里：按 Home、点导航等直接跳转时，区块从视口上方直接到下方，观察器不会通知
+    var ticking = false;
+    window.addEventListener("scroll", function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        ticking = false;
+        var bottom = window.innerHeight;
+        document.querySelectorAll(".reveal.is-in").forEach(function (item) {
+          if (item.getBoundingClientRect().top > bottom) item.classList.remove("is-in");
+        });
+      });
+    }, { passive: true });
     items.forEach(function (item) {
       var top = item.getBoundingClientRect().top;
       if (top < window.innerHeight) return; // 首屏已在视口内的不动
